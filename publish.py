@@ -29,16 +29,21 @@ class Publish(object):
         try:
             yield
         except:
+            print 'Aborting!'
             subprocess.check_call(['/usr/bin/sudo','/usr/bin/cvmfs_server',
-                                   'abort'])
+                                   'abort','-f'])
+            raise
         else:
+            print 'Publishing...'
             subprocess.check_call(['/usr/bin/sudo','/usr/bin/cvmfs_server',
                                    'publish'])
+            subprocess.check_call(['/usr/bin/sudo','/usr/bin/cvmfs_server',
+                                   'resign'])
     
     def _rsync(self,src,dest):
         subprocess.check_call(['/usr/bin/rsync','-og','-i','-rlptD',
-                               '--exclude /.*','--delete',
-                               src,dest])
+                               '--exclude="/.*"','--exclude=".svn"',
+                               '--delete',src,dest])
     
     def _publish_with_versioning(self,input_dir,output_dir):
         """Do versioning of directory"""
@@ -105,6 +110,7 @@ class Publish(object):
             
             self._publish_data()
         
+        print 'Success!'
     
 if __name__ == '__main__':
     from optparse import OptionParser
