@@ -35,6 +35,11 @@ class Publish(object):
             subprocess.check_call(['/usr/bin/sudo','/usr/bin/cvmfs_server',
                                    'publish'])
     
+    def _rsync(self,src,dest):
+        subprocess.check_call(['/usr/bin/rsync','-og','-i','-rlptD',
+                               '--exclude /.*','--delete',
+                               src,dest])
+    
     def _publish_with_versioning(self,input_dir,output_dir):
         """Do versioning of directory"""
         version = 0
@@ -45,9 +50,7 @@ class Publish(object):
                     version = v
         version = 'v%06d'%version
         
-        subprocess.check_call(['/usr/bin/rsync','-og','-i','-rlptD',
-                               '--exclude /.cvmfscatalog','--delete',
-                               input_dir,os.path.join(output_dir,version)])
+        self._rsync(input_dir,os.path.join(output_dir,version))
         
         # symlink latest to the new version
         curdir = os.getcwd()
@@ -74,10 +77,7 @@ class Publish(object):
         """Do copying of meta-projects"""
         input_dir = os.path.join(self.input,self.meta_dir)
         output_dir = os.path.join(self.output,self.meta_dir)
-        
-        subprocess.check_call(['/usr/bin/rsync','-og','-i','-rlptD',
-                               '--exclude /.cvmfscatalog','--delete',
-                               input_dir,output_dir])
+        self._rsync(input_dir,output_dir)
     
     def publish(self):
         """Publish a repository"""
@@ -100,11 +100,8 @@ class Publish(object):
                     self._publish_meta(d)
                 else:
                     # random file
-                    subprocess.check_call([
-                        '/usr/bin/rsync','-og','-i','-rlptD',
-                        '--exclude /.cvmfscatalog','--delete',
-                        os.path.join(self.input,d),
-                        os.path.join(self.output,d)])
+                    self._rsync(os.path.join(self.input,d),
+                                os.path.join(self.output,d))
             
             self._publish_data()
         
