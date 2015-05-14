@@ -1,0 +1,11 @@
+To use IceCube software, run the following command:
+eval `/cvmfs/icecube.opensciencegrid.org/setup.sh`
+
+Other versions of the toolset are available in subdirectories that are not
+"standard" and are used identically.
+
+Currently defined toolsets are:
+
+py2-v1 Production tools with Python 2.7, based on I3_PORTS
+py2-v2 Production tools with Python 2.7 and newer packages; I3_PORTS for complex installs
+py3-v1 Experimental tools with Python 3.3. NOT FOR PRODUCTION USE
