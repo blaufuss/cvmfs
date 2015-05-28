@@ -9,7 +9,7 @@ from build_util import wget, unpack, version_dict
 
 # if version >= key, year = value
 years = {'3080300':'2014',
-         '3080800':'2015',
+         '3080800':'2015'
         }
 
 def install(dir_name,version=None):
@@ -20,8 +20,8 @@ def install(dir_name,version=None):
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
             y = None
-            for v in years:
-                if version >= str(v):
+            for v in sorted(years):
+                if version >= v:
                     y = years[v]
             if y is None:
                 raise Exception('cannot find version')

@@ -10,14 +10,14 @@ from build_util import wget, unpack, version_dict
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','tclsh')):
         print('installing tcl/tk version',version)
-        tcl_name = 'tcl'+str(version)+'-src.tar.gz'
-        tk_name = 'tk'+str(version)+'-src.tar.gz'
+        tcl_name = 'tcl'+version+'-src.tar.gz'
+        tk_name = 'tk'+version+'-src.tar.gz'
         try:
             tmp_dir = tempfile.mkdtemp()
             tcl_path = os.path.join(tmp_dir,tcl_name)
-            tcl_url = os.path.join('http://iweb.dl.sourceforge.net/project/tcl/Tcl/'+str(version),tcl_name)
+            tcl_url = os.path.join('http://iweb.dl.sourceforge.net/project/tcl/Tcl',version,tcl_name)
             tk_path = os.path.join(tmp_dir,tk_name)
-            tk_url = os.path.join('http://iweb.dl.sourceforge.net/project/tcl/Tcl/'+str(version),tk_name)
+            tk_url = os.path.join('http://iweb.dl.sourceforge.net/project/tcl/Tcl',version,tk_name)
             wget(tcl_url,tcl_path)
             wget(tk_url,tk_path)
             unpack(tcl_path,tmp_dir)
@@ -36,7 +36,7 @@ def install(dir_name,version=None):
                                     dir_name],cwd=tk_dir):
                 if not subprocess.call(['make'],cwd=tk_dir):
                     subprocess.call(['make','install'],cwd=tk_dir)
-            os.symlink(os.path.expandvars('$SROOT/bin/tclsh8.5'),
+            os.symlink(os.path.expandvars('$SROOT/bin/tclsh'+'.'.join(version.split('.')[:2])),
                        os.path.expandvars('$SROOT/bin/tclsh'))
         finally:
             shutil.rmtree(tmp_dir)
