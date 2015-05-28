@@ -77,8 +77,8 @@ def build(src,dest):
     copy_src(os.path.join(src,'data'),dir_name)
     
     gcd(dir_name)
-    #test_data(dir_name)
+    test_data(dir_name)
     nugen_tables(dir_name)
     clsim_tables(dir_name)
-    #photon_tables(dir_name)
+    photon_tables(dir_name)
     voms(dir_name)

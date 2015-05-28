@@ -12,10 +12,7 @@ import os
 if os.path.dirname(__file__) not in sys.path:
     sys.path.append(os.path.dirname(__file__))
 
-def get_module(name, class_name='build'):
-    """Import module"""
-    x = __import__(name,globals(),locals(),[class_name])
-    return (getattr(x,class_name))
+from build_util import get_module
 
 def get_variants():
     build_variants = {}
@@ -46,11 +43,10 @@ def main():
     options.dest = absolute(options.dest)
     options.src = absolute(options.src)
     
-    if not options.variant:
-        for v in build_variants:
+    
+    for v in build_variants:
+        if (options.variant and options.variant in v) or not options.variant:
             build_variants[v](src=options.src, dest=options.dest)
-    elif options.variant in build_variants:
-        build_variants[options.variant](src=options.src, dest=options.dest)
     else:
         raise Exception('variant %s not found'%(str(options.variant)))
 

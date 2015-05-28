@@ -2,12 +2,32 @@
 
 import os
 import subprocess
-import tempfile
 import shutil
+from functools import partial
 
-def wget(src, dest):
-    if subprocess.call(['wget','-nv','-t','5','-O',dest,src]):
-        raise Exception('wget failed: %s %s'%(src,dest))
+def get_module(name, class_name='build'):
+    """Import module"""
+    x = __import__(name,globals(),locals(),[class_name])
+    return (getattr(x,class_name))
+
+def get_tools():
+    """Get all tools, calling the `versions` function"""
+    root_dir = os.path.join(os.path.dirname(__file__),'tools')
+    tools = {}
+    for module in os.listdir(root_dir):
+        if module.endswith('.py') and module != '__init__.py':
+            tmp = os.path.splitext(module)[0]
+            tools[tmp] = get_module('tools.'+tmp,'versions')()
+        elif os.path.isdir(os.path.join(root_dir,module)):
+            tools[module] = get_module('tools.'+module,'versions')()
+    return tools
+
+def wget(src, dest, retry=1):
+    for i in range(1,retry+1):
+        if not subprocess.call(['wget','-nv','-t','5','-O',dest,src]):
+            return
+        if i >= retry:
+            raise Exception('wget failed: %s %s'%(src,dest))
 
 def wget_recursive(src, dest):
     if subprocess.call(['wget','-nv','-N','-t','5','-P',dest,'-r','-l','1','-A','*.i3*','-nd',src]):
@@ -16,7 +36,7 @@ def wget_recursive(src, dest):
 def rsync(src,dest,flags='-a'):
     cmd = ['rsync']
     if flags:
-        cmd.extend(flags)
+        cmd += flags
     cmd += [src,dest]
     if subprocess.call(cmd):
         raise Exception('rsync failed: %s'%' '.join(cmd))
@@ -24,10 +44,18 @@ def rsync(src,dest,flags='-a'):
 def unpack(src,dest,flags=['-zx']):
     cmd = ['tar']
     if flags:
-        cmd.extend(flags)
+        cmd += flags
     cmd += ['-f',src,'-C',dest]
     if subprocess.call(cmd):
         raise Exception('unpack failed: %s'%' '.join(cmd))
+
+def unzip(src,dest,flags=['-oq']):
+    cmd = ['unzip']
+    if flags:
+        cmd += flags
+    cmd += [src,'-d',dest]
+    if subprocess.call(cmd):
+        raise Exception('unzip failed: %s'%' '.join(cmd))
 
 def get_md5sum(path):
     try:
@@ -71,3 +99,29 @@ def copy_src(src,dest):
             copy_src(path,os.path.join(dest,p))
         else:
             shutil.copy2(path,dest)
+
+def load_env(dir_name):
+    """Load the environment from dir/setup.sh"""
+    p = subprocess.Popen(os.path.join(dir_name,'setup.sh'),
+                         shell=True, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    output = p.communicate()[0]
+    new_env = {}
+    for line in output.split(';'):
+        line = line.strip()
+        if line:
+            parts = line.split('=',1)
+            name = parts[0].replace('export ','').strip()
+            value = parts[1].strip(' "')
+            os.environ[name] = value
+
+class version_dict(dict):
+    def __init__(self, handler, *args, **kwargs):
+        self.handler = handler
+        dict.__init__(self, *args, **kwargs)
+
+    def __getitem__(self, key):
+        try:
+            return dict.__getitem__(self,key)
+        except Exception:
+            return partial(self.handler,version=key)
