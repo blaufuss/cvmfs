@@ -52,7 +52,7 @@ def python_packages(dir_name):
                 'Cython==0.19.1','tables==3.0.0',
                 'matplotlib==1.4.0','Sphinx==1.1.3','healpy==1.7.3',
                 'pyMinuit2==1.1.0','spectrum==0.5.6','urwid==1.1.1',
-                'PyMySQL==0.6.1','pyFFTW==0.9.2']
+                'PyMySQL==0.6.1']
     
     if os.environ['OS_ARCH'] == 'RHEL_5_x86_64':
         packages += ['pyOpenSSL==0.12']

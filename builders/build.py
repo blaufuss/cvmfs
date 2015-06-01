@@ -19,7 +19,11 @@ def get_variants():
     for module in os.listdir(os.path.join(os.path.dirname(__file__),'variants')):
         if module.endswith('.py') and module != '__init__.py':
             tmp = os.path.splitext(module)[0]
-            build_variants[tmp] = get_module('variants.'+tmp)
+            try:
+                build_variants[tmp] = get_module('variants.'+tmp)
+            except Exception:
+                print('failed to import variants.'+tmp)
+                raise
     return build_variants
 
 def absolute(p):
@@ -44,10 +48,12 @@ def main():
     options.src = absolute(options.src)
     
     
+    not_fount = True
     for v in build_variants:
         if (options.variant and options.variant in v) or not options.variant:
             build_variants[v](src=options.src, dest=options.dest)
-    else:
+            not_found = False
+    if not_found:
         raise Exception('variant %s not found'%(str(options.variant)))
 
 if __name__ == '__main__':

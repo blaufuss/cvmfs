@@ -7,7 +7,7 @@ import shutil
 
 from build_util import wget, unpack, version_dict
 
-def install(dir_name,version=None):
+def install(dir_name,version=None,i3ports=False):
     if not os.path.exists(os.path.join(dir_name,'lib','libchealpix.so')):
         print('installing healpix version',version)
         try:
@@ -28,7 +28,10 @@ def install(dir_name,version=None):
             wget(url,path,retry=5)
             unpack(path,tmp_dir)
             healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src/C/subs')
-            i3ports_dir = os.environ['I3_PORTS']
+            if i3ports:
+                i3ports_dir = os.environ['I3_PORTS']
+            else:
+                i3ports_dir = dir_name
             if subprocess.call(['make','shared',
                                 'CFITSIO_INCDIR='+os.path.join(i3ports_dir,'include'),
                                 'CFITSIO_LIBDIR='+os.path.join(i3ports_dir,'lib')

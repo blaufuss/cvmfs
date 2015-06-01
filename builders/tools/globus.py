@@ -26,11 +26,19 @@ def install(dir_name,version=None):
             wget(url,path)
             unpack(path,tmp_dir)
             globus_dir = os.path.join(tmp_dir,name.rsplit('.',2)[0])
-            if subprocess.call([os.path.join(globus_dir,'configure'),
-                                '--prefix',dir_name],cwd=globus_dir):
-                raise Exception('globus failed to configure')
-            if subprocess.call(['make','gpt','globus-data-management-client'],cwd=globus_dir):
-                raise Exception('globus failed to make')
+            if int(version[0]) <= 5:
+                if subprocess.call([os.path.join(globus_dir,'configure'),
+                                    '--prefix',dir_name],cwd=globus_dir):
+                    raise Exception('globus failed to configure')
+                if subprocess.call(['make','gpt','globus-data-management-client'],cwd=globus_dir):
+                    raise Exception('globus failed to make')
+            elif int(version[0]) >= 6:
+                if subprocess.call([os.path.join(globus_dir,'configure'),
+                                    '--disable-gram5','--disable-myproxy',
+                                    '--prefix',dir_name],cwd=globus_dir):
+                    raise Exception('globus failed to configure')
+                if subprocess.call(['make'],cwd=globus_dir):
+                    raise Exception('globus failed to make')
             if subprocess.call(['make','install'],cwd=globus_dir):
                 raise Exception('globus failed to install')
         finally:
