@@ -48,7 +48,7 @@ def main():
     options.src = absolute(options.src)
     
     
-    not_fount = True
+    not_found = True
     for v in build_variants:
         if (options.variant and options.variant in v) or not options.variant:
             build_variants[v](src=options.src, dest=options.dest)
