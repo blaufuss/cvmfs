@@ -39,6 +39,8 @@ def main():
                       help="Source for repository template")
     parser.add_option("--variant", type="string", default=None, 
                       help="Specific variant to build")
+    parser.add_option("--scratch", type="string", default=None, 
+                      help="Scratch directory (default: /tmp)")
     
     (options, args) = parser.parse_args()
     
@@ -47,6 +49,10 @@ def main():
     options.dest = absolute(options.dest)
     options.src = absolute(options.src)
     
+    if options.scratch:
+        os.environ['TMPDIR'] = options.scratch
+        os.environ['TEMP'] = options.scratch
+        os.environ['TMP'] = options.scratch
     
     not_found = True
     for v in build_variants:
