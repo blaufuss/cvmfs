@@ -103,8 +103,13 @@ def build(src,dest):
         if not os.path.exists(dest):
             os.symlink(os.path.join(dir_name,src),dest)
     
+    # RHEL 6 is too old to build newer libtool
+    if 'RHEL_6' in os.environ['OS_ARCH']:
+        tools['libtool']['2.4.4'](dir_name)
+    else:
+        tools['libtool']['2.4.6'](dir_name)
+    
     # build core software
-    tools['libtool']['2.4.6'](dir_name)
     tools['libffi']['3.2.1'](dir_name)
     tools['libarchive']['3.1.2'](dir_name)
     tools['libxml2']['2.9.2'](dir_name)

@@ -8,7 +8,7 @@ import shutil
 from build_util import wget, unpack, version_dict
 
 def install(dir_name,version=None,i3ports=False):
-    if not os.path.exists(os.path.join(dir_name,'lib','libchealpix.so')):
+    if not os.path.exists(os.path.join(dir_name,'lib','libhealpix_cxx.so')):
         print('installing healpix version',version)
         try:
             tmp_dir = tempfile.mkdtemp()
@@ -27,7 +27,9 @@ def install(dir_name,version=None,i3ports=False):
             # the sourceforge retry
             wget(url,path,retry=5)
             unpack(path,tmp_dir)
-            healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src/C/subs')
+            
+            # make C healpix
+            healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src','C','subs')
             if i3ports:
                 i3ports_dir = os.environ['I3_PORTS']
             else:
@@ -36,14 +38,33 @@ def install(dir_name,version=None,i3ports=False):
                                 'CFITSIO_INCDIR='+os.path.join(i3ports_dir,'include'),
                                 'CFITSIO_LIBDIR='+os.path.join(i3ports_dir,'lib')
                                ],cwd=healpix_dir):
-                raise Exception('healpix failed to make')
+                raise Exception('healpix C failed to make')
             if subprocess.call(['make','install',
                                 'INCDIR='+os.path.join(dir_name,'include'),
                                 'LIBDIR='+os.path.join(dir_name,'lib')
                                ],cwd=healpix_dir):
-                raise Exception('healpix failed to install')
+                raise Exception('healpix C failed to install')
+            
+            # make CXX healpix
+            healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src','cxx')
+            if subprocess.call(['autoconf'],cwd=healpix_dir):
+                raise Exception('healpix CXX failed to autoconf')
+            if subprocess.call([os.path.join(healpix_dir,'configure'),
+                                '--prefix='+dir_name,'--disable-openmp',
+                                '--with-libcfitsio='+dir_name,
+                                '--with-libcfitsio-include='+os.path.join(dir_name,'include'),
+                                '--with-libcfitsio-lib='+os.path.join(dir_name,'lib'),
+                               ],cwd=healpix_dir):
+                raise Exception('healpix CXX failed to configure')
+            conf = os.path.join(healpix_dir,'config','config.auto')
+            data = open(conf).read().replace('-march=native','').replace('-ffast-math','')
+            open(conf,'w').write(data)
+            if subprocess.call(['make'],cwd=healpix_dir):
+                raise Exception('healpix CXX failed to make')
+            if subprocess.call(['make','install'],cwd=healpix_dir):
+                raise Exception('healpix CXX failed to install')
         finally:
-            shutil.rmtree(tmp_dir)
+            pass#shutil.rmtree(tmp_dir)
 
 def versions():
     return version_dict(install)

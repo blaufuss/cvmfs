@@ -25,6 +25,11 @@ def install(dir_name,version=None):
                 raise Exception('zmq failed to make')
             if subprocess.call(['make','install'],cwd=zmq_dir):
                 raise Exception('zmq failed to install')
+            
+            # the c++ bindings
+            url = 'https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp'
+            path = os.path.join(dir_name,'include','zmq.hpp')
+            wget(url,path)
         finally:
             shutil.rmtree(tmp_dir)
 

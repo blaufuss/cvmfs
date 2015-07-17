@@ -45,7 +45,7 @@ def install(dir_name,version=None):
             # manually install
             shutil.copy2(os.path.join(sprng_dir,'libsprng.a'),
                          os.path.join(dir_name,'lib','libsprng.a'))
-            include_dir = os.path.join(dir_name,'include','spring')
+            include_dir = os.path.join(dir_name,'include','sprng')
             if not os.path.isdir(include_dir):
                 os.mkdir(include_dir)
             for f in glob.glob(os.path.join(sprng_dir,'include','*.h')):

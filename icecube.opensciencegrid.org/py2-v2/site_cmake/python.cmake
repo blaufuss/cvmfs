@@ -4,7 +4,7 @@ set(PYTHON_EXECUTABLE "$ENV{SROOT}/bin/python" CACHE FILEPATH "Python interprete
 set(PYTHON_VERSION "2.7" CACHE STRING "Python version")
 set(PYTHON_FOUND TRUE CACHE BOOL "Python found")
 
-set(PYTHON_NUMERIC_VERSION 20700)
+set(PYTHON_NUMERIC_VERSION 20710)
 
 set(NUMPY_FOUND TRUE CACHE BOOL "Numpy found successfully" FORCE)
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
