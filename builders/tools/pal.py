@@ -20,6 +20,14 @@ def install(dir_name,version=None):
             wget(url,path)
             unpack(path,tmp_dir)
             pal_dir = os.path.join(tmp_dir,'pal-'+version)
+            m4_dir = os.path.join(pal_dir,'m4')
+            if not os.path.exists(m4_dir):
+                os.mkdir(m4_dir)
+            
+            cfg_path = os.path.join(pal_dir,'configure.ac')
+            cfg_data = open(cfg_path).read().replace('2.69','2.63')
+            open(cfg_path,'w').write(cfg_data)
+            
             mod_env = copy.deepcopy(os.environ)
             mod_env['LDFLAGS'] = '-L'+os.path.join(dir_name,'lib')
             if 'LDFLAGS' in os.environ:
