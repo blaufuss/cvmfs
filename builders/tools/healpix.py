@@ -45,6 +45,11 @@ def install(dir_name,version=None,i3ports=False):
                                ],cwd=healpix_dir):
                 raise Exception('healpix C failed to install')
             
+            # special environ
+            env = dict(os.environ)
+            env['CFLAGS'] = '-fno-tree-fre -fPIC'
+            env['CPPFLAGS'] = '-fno-tree-fre -fPIC'
+            
             # make CXX healpix
             healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src','cxx')
             if subprocess.call(['autoconf'],cwd=healpix_dir):
@@ -54,15 +59,31 @@ def install(dir_name,version=None,i3ports=False):
                                 '--with-libcfitsio='+dir_name,
                                 '--with-libcfitsio-include='+os.path.join(dir_name,'include'),
                                 '--with-libcfitsio-lib='+os.path.join(dir_name,'lib'),
-                               ],cwd=healpix_dir):
+                               ],cwd=healpix_dir,env=env):
                 raise Exception('healpix CXX failed to configure')
             conf = os.path.join(healpix_dir,'config','config.auto')
             data = open(conf).read().replace('-march=native','').replace('-ffast-math','')
+            data = data.replace('ARCREATE=ar cr','ARCREATE=gcc -shared -O3 -o').replace('-static ','')
             open(conf,'w').write(data)
+            for root,dirs,files in os.walk(healpix_dir):
+                for f in files:
+                    if f == 'planck.make':
+                        fname = os.path.join(root,f)
+                        data = open(fname).read().replace('.a','.so')
+                        open(fname,'w').write(data)
             if subprocess.call(['make'],cwd=healpix_dir):
                 raise Exception('healpix CXX failed to make')
-            if subprocess.call(['make','install'],cwd=healpix_dir):
-                raise Exception('healpix CXX failed to install')
+            for root,dirs,files in os.walk(os.path.join(healpix_dir,'auto')):
+                install_cmd = ['install','-D']
+                p = os.path.basename(root)
+                if 'include' in root:
+                    install_cmd.extend(['-m','644'])
+                    p = os.path.join(p,'healpix_cxx')
+                for f in files:
+                    if subprocess.call(install_cmd + [os.path.join(root,f),
+                                       os.path.join(dir_name,p,f)]
+                                       ,cwd=healpix_dir):
+                        raise Exception('healpix CXX failed to install %s'%os.path.join(root,f))
         finally:
             pass#shutil.rmtree(tmp_dir)
 
