@@ -127,3 +127,19 @@ class version_dict(dict):
             return dict.__getitem__(self,key)
         except Exception:
             return partial(self.handler,version=key)
+
+def get_fortran_compiler(version=77):
+    """Get the best fortran compiler available."""
+    if version == 77:
+        for c in ('pgf77','g77','f77','gfortran'):
+            if not subprocess.call(['which',c]):
+                return c
+    elif version == 90:
+        for c in ('pgf90','gfortran'):
+            if not subprocess.call(['which',c]):
+                return c
+    elif version == 95:
+        for c in ('pgf95','gfortran'):
+            if not subprocess.call(['which',c]):
+                return c
+    raise Exception('fortran compiler for version %s not found'%version)
