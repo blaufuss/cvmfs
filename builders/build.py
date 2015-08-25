@@ -57,9 +57,9 @@ def main():
         os.environ['TMP'] = options.scratch
     
     kwargs = {}
-    if options.svnup.lower() in ('1','true','on','yes','y','t'):
+    if options.svnup and options.svnup.lower() in ('1','true','on','yes','y','t'):
         kwargs['svn_up'] = True
-    elif options.svnup.lower() in ('0','false','off','no','n','f'):
+    elif options.svnup and options.svnup.lower() in ('0','false','off','no','n','f'):
         kwargs['svn_up'] = False
     elif options.svnup:
         raise Exception('unknown option for svnup: %s'%options.svnup)
