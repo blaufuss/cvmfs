@@ -15,6 +15,8 @@ def get_tools():
     root_dir = os.path.join(os.path.dirname(__file__),'tools')
     tools = {}
     for module in os.listdir(root_dir):
+        if module.startswith('.'):
+            continue
         if module.endswith('.py') and module != '__init__.py':
             tmp = os.path.splitext(module)[0]
             tools[tmp] = get_module('tools.'+tmp,'versions')()
