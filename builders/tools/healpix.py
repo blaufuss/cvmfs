@@ -85,7 +85,7 @@ def install(dir_name,version=None,i3ports=False):
                                        ,cwd=healpix_dir):
                         raise Exception('healpix CXX failed to install %s'%os.path.join(root,f))
         finally:
-            pass#shutil.rmtree(tmp_dir)
+            shutil.rmtree(tmp_dir)
 
 def versions():
     return version_dict(install)

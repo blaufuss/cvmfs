@@ -7,7 +7,7 @@ import shutil
 import string
 import glob
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, get_fortran_compiler
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libsprng.a')):
@@ -35,11 +35,10 @@ def install(dir_name,version=None):
                 f.close()
             make_intel = os.path.join(sprng_dir,'SRC','make.INTEL')
             data = open(make_intel).read()
-            open(make_intel,'w').write(data.replace('g77','f77').replace('-DAdd__','-DAdd_'))
-            makefile = os.path.join(sprng_dir,'Makefile')
-            data = open(makefile).read()
-            open(makefile,'w').write(data.replace('all : src examples tests','all : src'))
-            if subprocess.call(['make'],cwd=sprng_dir):
+            data = data.replace('g77',get_fortran_compiler()).replace('-DAdd__','-DAdd_')
+            data = data.replace('CFLAGS = ','CFLAGS = -fPIC ')
+            open(make_intel,'w').write(data)
+            if subprocess.call(['make','src'],cwd=sprng_dir):
                 raise Exception('sprng failed to make')
             
             # manually install
