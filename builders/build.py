@@ -41,6 +41,8 @@ def main():
                       help="Specific variant to build")
     parser.add_option("--scratch", type="string", default=None, 
                       help="Scratch directory (default: /tmp)")
+    parser.add_option("--svnup", type="string", default=None, 
+                      help="SVN update {True,False}")
     
     (options, args) = parser.parse_args()
     
@@ -54,10 +56,18 @@ def main():
         os.environ['TEMP'] = options.scratch
         os.environ['TMP'] = options.scratch
     
+    kwargs = {}
+    if options.svnup.lower() in ('1','true','on','yes','y','t'):
+        kwargs['svn_up'] = True
+    elif options.svnup.lower() in ('0','false','off','no','n','f'):
+        kwargs['svn_up'] = False
+    elif options.svnup:
+        raise Exception('unknown option for svnup: %s'%options.svnup)
+    
     not_found = True
     for v in build_variants:
         if (options.variant and options.variant in v) or not options.variant:
-            build_variants[v](src=options.src, dest=options.dest)
+            build_variants[v](src=options.src, dest=options.dest,**kwargs)
             not_found = False
     if not_found:
         raise Exception('variant %s not found'%(str(options.variant)))

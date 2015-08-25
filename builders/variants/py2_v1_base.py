@@ -81,7 +81,7 @@ def python_packages(dir_name):
         del os.environ['CFLAGS']
     
 
-def build(src,dest):
+def build(src,dest,**build_kwargs):
     """The main builder"""
     # first, make sure the base dir is there
     dir_name = os.path.join(dest,'py2-v1')
