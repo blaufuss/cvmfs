@@ -38,7 +38,7 @@ def install(dir_name,version=None):
     for path in ('etc/vomsdir','etc/vomses','share/certificates',
                  'share/vomsdir'):
         if not os.path.exists(os.path.join(dir_name,path)):
-            os.symlink(os.path.join(data,'voms',path),
+            os.symlink(os.path.join(i3_data,'voms',path),
                        os.path.join(dir_name,path))
 
 def versions():
