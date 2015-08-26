@@ -96,6 +96,8 @@ def copy_src(src,dest):
     except Exception:
         pass
     for p in os.listdir(src):
+        if p.startswith('.'):
+            continue
         path = os.path.join(src,p)
         if os.path.isdir(path):
             copy_src(path,os.path.join(dest,p))
