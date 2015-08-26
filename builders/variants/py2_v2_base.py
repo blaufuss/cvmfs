@@ -25,7 +25,7 @@ def ports_packages(dir_name):
     
     if os.uname()[0].lower() == 'linux':
         packages += ['geant4_4.9.5','pythia_root_6.4.16',
-                     'root_5.30.06 +mathmore +nox11','genie_2.6.4']
+                     'root_5.34.18 +mathmore +nox11','genie_2.8.6']
     
     for pkg in packages:
         tools['i3_ports']['manual_package'](pkg)
