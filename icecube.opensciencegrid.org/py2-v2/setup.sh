@@ -10,7 +10,6 @@ SROOTBASE=$(cd "$DIR" && echo "$(pwd -L)")
 . $SROOTBASE/os_arch.sh
 
 SROOT=$SROOTBASE/$OS_ARCH
-I3_SITE_CMAKE_DIR=$SROOTBASE/site_cmake
 
 I3_PORTS=$SROOT/i3ports
 PATH=$SROOT/bin:$I3_PORTS/bin:$PATH
@@ -24,19 +23,6 @@ PYTHONPATH=$SROOT/lib/python2.7/site-packages:$I3_PORTS/lib/python2.7/site-packa
 PERL5LIB=$SROOT/lib/perl:$SROOT/lib/perl5:$SROOT/lib/perl5/site_perl:$PERL5LIB
 MANPATH=$SROOT/man:$SROOT/share/man:$MANPATH
 
-# Port version specific bits
-LD_LIBRARY_PATH=$I3_PORTS/lib/Minuit2-5.24.00:$I3_PORTS/lib/boost-1.38.0:$I3_PORTS/lib/log4cplus-1.0.4:$LD_LIBRARY_PATH
-if [ -d $I3_PORTS/qt-4.6.4 ]; then
-	LD_LIBRARY_PATH=$I3_PORTS/qt-4.6.4/lib:$LD_LIBRARY_PATH
-	PATH=$I3_PORTS/qt-4.6.4/bin:$PATH
-elif [ -d $I3_PORTS/qt-4.6.0 ]; then
-	LD_LIBRARY_PATH=$I3_PORTS/qt-4.6.0/lib:$LD_LIBRARY_PATH
-	PATH=$I3_PORTS/qt-4.6.0/bin:$PATH
-elif [ -d $I3_PORTS/qt-4.4.3 ]; then
-	LD_LIBRARY_PATH=$I3_PORTS/qt-4.4.3/lib:$LD_LIBRARY_PATH
-	PATH=$I3_PORTS/qt-4.4.3/bin:$PATH
-fi
-
 # ROOT specific bits
 if [ -d $I3_PORTS/root-v5.34.18 ]; then
 	: ${ROOTVER="5.34.18"}
@@ -46,12 +32,6 @@ elif [ -d $I3_PORTS/root-v5.30.06 ]; then
 	: ${ROOTVER="5.30.06"}
 elif [ -d $I3_PORTS/root-v5.30.05 ]; then
 	: ${ROOTVER="5.30.05"}
-elif [ -d $I3_PORTS/root-v5.28.00d ]; then
-	: ${ROOTVER="5.28.00d"}
-elif [ -d $I3_PORTS/root-v5.28.00 ]; then
-	: ${ROOTVER="5.28.00"}
-elif [ -d $I3_PORTS/root-v5.24.00b ]; then
-	: ${ROOTVER="5.24.00b"}
 fi
 : ${ROOTSYS="$I3_PORTS/root-v$ROOTVER"}
 PATH=$ROOTSYS/bin:$PATH
@@ -91,7 +71,7 @@ if ([ -z ${JAVA_HOME} ] || [ ! -f ${JAVA_HOME}/bin/java ]); then
 fi
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${JAVA_HOME}/lib:${JAVA_HOME}/jre/lib:${JAVA_HOME}/jre/lib/amd64:${JAVA_HOME}/jre/lib/amd64/server:${JAVA_HOME}/jre/lib/i386:${JAVA_HOME}/jre/lib/i386/server
 
-VARS="SROOTBASE SROOT I3_PORTS I3_SITE_CMAKE_DIR I3_DATA I3_TESTDATA PATH MANPATH PKG_CONFIG_PATH LD_LIBRARY_PATH PYTHONPATH ROOTSYS OS_ARCH GCC_VERSION JAVA_HOME GOTO_NUM_THREADS PERL5LIB GLOBUS_LOCATION"
+VARS="SROOTBASE SROOT I3_PORTS I3_DATA I3_TESTDATA PATH MANPATH PKG_CONFIG_PATH LD_LIBRARY_PATH PYTHONPATH ROOTSYS OS_ARCH GCC_VERSION JAVA_HOME GOTO_NUM_THREADS PERL5LIB GLOBUS_LOCATION"
 
 GLOBUS_LOCATION=${SROOT}
 # if X509_USER_PROXY is just a filename, qualify it
