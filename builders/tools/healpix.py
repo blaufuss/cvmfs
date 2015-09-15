@@ -65,6 +65,9 @@ def install(dir_name,version=None,i3ports=False):
             data = open(conf).read().replace('-march=native','').replace('-ffast-math','')
             data = data.replace('ARCREATE=ar cr','ARCREATE=gcc -shared -O3 -o').replace('-static ','')
             open(conf,'w').write(data)
+            conf = os.path.join(healpix_dir,'Makefile')
+            data = open(conf).read().replace('$(ARCREATE) $@ $^','$(ARCREATE) $@ $^ $(CXXLFLAGS) $(CXX_EXTRALIBS)')
+            open(conf,'w').write(data)
             for root,dirs,files in os.walk(healpix_dir):
                 for f in files:
                     if f == 'planck.make':

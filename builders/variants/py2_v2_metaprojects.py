@@ -28,5 +28,5 @@ def build(src,dest,svn_up=None,**build_kwargs):
         kwargs['svn_up'] = svn_up
     tools['i3_metaproject']['offline-software']['trunk'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['trunk'](dir_name,**kwargs)
-    #tools['i3_metaproject']['icerec']['trunk'](dir_name,**kwargs)
+    tools['i3_metaproject']['icerec']['trunk'](dir_name,**kwargs)
 
