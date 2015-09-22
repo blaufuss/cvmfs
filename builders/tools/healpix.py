@@ -4,6 +4,7 @@ import os
 import subprocess
 import tempfile
 import shutil
+import glob
 
 from build_util import wget, unpack, version_dict
 
@@ -57,25 +58,24 @@ def install(dir_name,version=None,i3ports=False):
             if subprocess.call([os.path.join(healpix_dir,'configure'),
                                 '--prefix='+dir_name,'--disable-openmp',
                                 '--with-libcfitsio='+dir_name,
-                                '--with-libcfitsio-include='+os.path.join(dir_name,'include'),
-                                '--with-libcfitsio-lib='+os.path.join(dir_name,'lib'),
+                                '--with-libcfitsio-include='+os.path.join(i3ports_dir,'include'),
+                                '--with-libcfitsio-lib='+os.path.join(i3ports_dir,'lib'),
                                ],cwd=healpix_dir,env=env):
                 raise Exception('healpix CXX failed to configure')
             conf = os.path.join(healpix_dir,'config','config.auto')
             data = open(conf).read().replace('-march=native','').replace('-ffast-math','')
-            data = data.replace('ARCREATE=ar cr','ARCREATE=gcc -shared -O3 -o').replace('-static ','')
             open(conf,'w').write(data)
-            conf = os.path.join(healpix_dir,'Makefile')
-            data = open(conf).read().replace('$(ARCREATE) $@ $^','$(ARCREATE) $@ $^ $(CXXLFLAGS) $(CXX_EXTRALIBS)')
-            open(conf,'w').write(data)
-            for root,dirs,files in os.walk(healpix_dir):
-                for f in files:
-                    if f == 'planck.make':
-                        fname = os.path.join(root,f)
-                        data = open(fname).read().replace('.a','.so')
-                        open(fname,'w').write(data)
-            if subprocess.call(['make'],cwd=healpix_dir):
+            if subprocess.call(['make'], cwd=healpix_dir):
                 raise Exception('healpix CXX failed to make')
+            lib_dir = os.path.join(healpix_dir,'auto','lib')
+            link_cmd = ['gcc', '-shared', '-o',
+                        os.path.join(lib_dir, 'libhealpix_cxx.so'),
+                        '-L'+os.path.join(i3ports_dir,'lib'),'-lcfitsio',
+                        '-Wl,--whole-archive']
+            link_cmd += glob.glob(os.path.join(lib_dir, '*.a'))
+            link_cmd += ['-Wl,--no-whole-archive']
+            if subprocess.call(link_cmd, cwd=healpix_dir):
+                raise Exception('healpix CXX failed to link')
             for root,dirs,files in os.walk(os.path.join(healpix_dir,'auto')):
                 install_cmd = ['install','-D']
                 p = os.path.basename(root)
@@ -83,6 +83,8 @@ def install(dir_name,version=None,i3ports=False):
                     install_cmd.extend(['-m','644'])
                     p = os.path.join(p,'healpix_cxx')
                 for f in files:
+                    if f.endswith('.a'):
+                        continue
                     if subprocess.call(install_cmd + [os.path.join(root,f),
                                        os.path.join(dir_name,p,f)]
                                        ,cwd=healpix_dir):
