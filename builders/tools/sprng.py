@@ -42,13 +42,17 @@ def install(dir_name,version=None):
                 raise Exception('sprng failed to make')
             
             # manually install
-            shutil.copy2(os.path.join(sprng_dir,'libsprng.a'),
-                         os.path.join(dir_name,'lib','libsprng.a'))
+            install_cmd = ['install','-D']
+            if subprocess.call(install_cmd + [os.path.join(sprng_dir,'libsprng.a'),
+                               os.path.join(dir_name,'lib','libsprng.a')],cwd=sprng_dir):
+                raise Exception('failed to install library')
+            install_cmd.extend(['-m','644'])
             include_dir = os.path.join(dir_name,'include','sprng')
-            if not os.path.isdir(include_dir):
-                os.mkdir(include_dir)
             for f in glob.glob(os.path.join(sprng_dir,'include','*.h')):
-                shutil.copy2(f,os.path.join(include_dir,os.path.basename(f)))
+                if subprocess.call(install_cmd + [f,
+                                   os.path.join(include_dir,os.path.basename(f))],
+                                   cwd=sprng_dir):
+                    raise Exception('failed to install %s'%f)
         finally:
             shutil.rmtree(tmp_dir)
 
