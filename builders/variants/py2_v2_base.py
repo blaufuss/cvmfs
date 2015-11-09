@@ -161,7 +161,7 @@ def build(src,dest,**build_kwargs):
         copied = False
         for path in ('/usr/lib','/usr/lib/x86_64-linux-gnu','/lib','/usr/lib64','/lib64'):
             for g in glob.glob(os.path.join(path,t+'*')):
-                outname = os.path.join(dir_name,'tools',t.replace('lib',''),os.path.basname(g))
+                outname = os.path.join(dir_name,'tools',t.replace('lib',''),os.path.basename(g))
                 if not os.path.exists(outname):
                     if not os.path.exists(os.path.dirname(outname)):
                         os.makedirs(outname)
