@@ -160,11 +160,12 @@ def build(src,dest,**build_kwargs):
     for t in ('libgfortran',):
         copied = False
         for path in ('/usr/lib','/usr/lib/x86_64-linux-gnu','/lib','/usr/lib64','/lib64'):
-            for g in glob.glob(os.path.join(path,t+'*'):
-                outname = os.path.join(dirname,'tools',t.replace('lib',''),os.path.basname(g))
+            for g in glob.glob(os.path.join(path,t+'*')):
+                outname = os.path.join(dir_name,'tools',t.replace('lib',''),os.path.basname(g))
                 if not os.path.exists(outname):
-                    os.makedirs(outname)
-                shutil.copy2(g,outname)
+                    if not os.path.exists(os.path.dirname(outname)):
+                        os.makedirs(outname)
+                    shutil.copy2(g,outname)
                 copied = True
             if copied:
                 break
