@@ -164,7 +164,7 @@ def build(src,dest,**build_kwargs):
                 outname = os.path.join(dir_name,'tools',t.replace('lib',''),os.path.basename(g))
                 if not os.path.exists(outname):
                     if not os.path.exists(os.path.dirname(outname)):
-                        os.makedirs(outname)
+                        os.makedirs(os.path.dirname(outname))
                     shutil.copy2(g,outname)
                 copied = True
             if copied:
