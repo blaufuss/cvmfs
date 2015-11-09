@@ -8,8 +8,8 @@ import shutil
 from build_util import wget, version_dict
 
 def install_pkg(package,*args):
-    print('installing python package ',package)
-    if subprocess.call(['pip','install','--quiet','--no-cache-dir',
+    print('installing python package',package)
+    if subprocess.call(['pip','install','--no-cache-dir',
                         '--allow-external',package,package]):
         raise Exception(package+' failed to install')
 

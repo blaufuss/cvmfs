@@ -5,6 +5,7 @@ import os
 import subprocess
 import tempfile
 import shutil
+import glob
 
 from build_util import *
 
@@ -155,3 +156,15 @@ def build(src,dest,**build_kwargs):
     python_packages(dir_name)
     tools['boostnumpy']['0.2.2'](dir_name,old_boost=True)
 
+    # copy "tools"
+    for t in ('libgfortran',):
+        copied = False
+        for path in ('/usr/lib','/usr/lib/x86_64-linux-gnu','/lib','/usr/lib64','/lib64'):
+            for g in glob.glob(os.path.join(path,t+'*'):
+                outname = os.path.join(dirname,'tools',t.replace('lib',''),os.path.basname(g))
+                if not os.path.exists(outname):
+                    os.makedirs(outname)
+                shutil.copy2(g,outname)
+                copied = True
+            if copied:
+                break
