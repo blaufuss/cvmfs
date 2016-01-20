@@ -37,7 +37,7 @@ def install(dir_name,version=None):
     i3_data = os.path.abspath(os.environ['I3_DATA'])
     for path in ('etc/vomsdir','etc/vomses','share/certificates',
                  'share/vomsdir'):
-        if not os.path.exists(os.path.join(dir_name,path)):
+        if not os.path.lexists(os.path.join(dir_name,path)):
             os.symlink(os.path.join(i3_data,'voms',path),
                        os.path.join(dir_name,path))
 

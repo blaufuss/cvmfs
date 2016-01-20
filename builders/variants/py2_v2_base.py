@@ -133,7 +133,7 @@ def build(src,dest,**build_kwargs):
     tools['gsl']['1.16'](dir_name)
     tools['boost']['1.57.0'](dir_name)
     tools['sprng']['2.0b'](dir_name)
-    tools['openblas']['0.2.14'](dir_name)
+    tools['openblas']['0.2.15'](dir_name)
     tools['suitesparse']['4.4.4'](dir_name)
     tools['cfitsio']['3.370'](dir_name)
     tools['fftw']['3.3.4'](dir_name)
@@ -141,7 +141,7 @@ def build(src,dest,**build_kwargs):
     tools['gnuplot']['5.0.0'](dir_name)
     tools['hdf5']['1.8.15'](dir_name)
     tools['erfa']['1.2.0'](dir_name)
-    tools['pal']['alpha'](dir_name)
+    tools['pal']['master'](dir_name)
     tools['healpix']['3.20'](dir_name)
 
     # build i3ports and difficult software

@@ -10,7 +10,6 @@ from build_util import wget, unpack, version_dict
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libpal.so')):
-        version = 'alpha'
         print('installing pal version',version)
         name = version+'.tar.gz'
         try:
@@ -23,11 +22,11 @@ def install(dir_name,version=None):
             m4_dir = os.path.join(pal_dir,'m4')
             if not os.path.exists(m4_dir):
                 os.mkdir(m4_dir)
-            
+
             cfg_path = os.path.join(pal_dir,'configure.ac')
             cfg_data = open(cfg_path).read().replace('2.69','2.63')
             open(cfg_path,'w').write(cfg_data)
-            
+
             mod_env = copy.deepcopy(os.environ)
             mod_env['LDFLAGS'] = '-L'+os.path.join(dir_name,'lib')
             if 'LDFLAGS' in os.environ:

@@ -49,5 +49,8 @@ case $DISTRIB in
 		fi
 esac
 
-: ${OS_ARCH=${DISTRIB}_${VERSION}_${CPU}}; export OS_ARCH
-which gcc 2>/dev/null > /dev/null && : ${GCC_VERSION=`gcc --version | head -1 | cut -d ' ' -f 3`}; export GCC_VERSION
+OS_ARCH=${DISTRIB}_${VERSION}_${CPU}
+GCC_VERSION=`gcc -v 2>&1|tail -1|awk '{print $3}'`
+
+export OS_ARCH
+export GCC_VERSION
