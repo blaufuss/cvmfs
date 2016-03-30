@@ -14,7 +14,7 @@ def install_pkg(package,prefix=None):
                '--allow-external', package,
               ]
     if prefix:
-        options.extend(['--root',prefix])
+        options.extend(['-t',glob.glob(os.path.join(prefix,'lib/python*/site-packages'))[0]])
     if subprocess.call(['pip','install']+options+[package]):
         raise Exception(package+' failed to install')
 
