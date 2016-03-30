@@ -40,6 +40,10 @@ def build(src,dest,**build_kwargs):
     tools['nginx']['1.9.9'](dir_name)
     tools['curl']['7.46.0'](dir_name)
 
+    if os.environ['OS_ARCH'] == 'RHEL_6_x86_64':
+        # we need gzip -k
+        tools['gzip']['1.6'](dir_name)
+
     # reload env because ports is stupid
     load_env(os.path.join(dest,'iceprod',iceprod_version))
 
