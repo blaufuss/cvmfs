@@ -43,8 +43,8 @@ def build(src,dest,**build_kwargs):
     # reload env because ports is stupid
     load_env(os.path.join(dest,'iceprod',iceprod_version))
 
-    tools['pip']['install']('futures==3.0.3')
-    tools['pip']['install']('pycurl==7.21.5')
-    tools['pip']['install']('setproctitle==1.1.9')
+    tools['pip']['install']('futures==3.0.3',dir_name)
+    tools['pip']['install']('pycurl==7.21.5',dir_name)
+    tools['pip']['install']('setproctitle==1.1.9',dir_name)
 
     tools['apsw']['3.9.2-r1'](dir_name)

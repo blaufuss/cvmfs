@@ -4,13 +4,18 @@ import os
 import subprocess
 import tempfile
 import shutil
+import glob
 
 from build_util import wget, version_dict
 
-def install_pkg(package,*args):
+def install_pkg(package,prefix=None):
     print('installing python package',package)
-    if subprocess.call(['pip','install','--no-cache-dir',
-                        '--allow-external',package,package]):
+    options = ['--no-cache-dir',
+               '--allow-external', package,
+              ]
+    if prefix:
+        options.extend(['--root',prefix])
+    if subprocess.call(['pip','install']+options+[package]):
         raise Exception(package+' failed to install')
 
 def install_pip(dir_name,version=None):
