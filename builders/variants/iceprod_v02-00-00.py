@@ -41,7 +41,7 @@ def build(src,dest,**build_kwargs):
     tools['curl']['7.46.0'](dir_name)
 
     # reload env because ports is stupid
-    load_env(os.path.join(dest,'py2-v2'))
+    load_env(os.path.join(dest,'iceprod',iceprod_version))
 
     tools['pip']['install']('futures==3.0.3')
     tools['pip']['install']('pycurl==7.21.5')

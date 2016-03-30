@@ -30,6 +30,7 @@ def install(dir_name,version=None):
                        '--without-mail_imap_module',
                        '--without-mail_smtp_module',
 #                       '--with-pcre='+os.path.join(os.environ['SROOT'],'lib'),
+                       '--error-log-path=stderr',
                       ]
             if subprocess.call([os.path.join(nginx_dir,'configure'),
                                 '--prefix='+dir_name]+options,
