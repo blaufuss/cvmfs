@@ -7,7 +7,7 @@
 # To use it with a CVMFS metaproject, place the following magic shebang line 
 # and comment line at the top of your python script:
 
-# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/standard/icetray-start
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v2/icetray-start
 # #METAPROJECT metaproject/VXX-YY-ZZ
 
 # To use a custom metaproject, make tarballs for each OS/architecture 
@@ -18,19 +18,19 @@
 #
 # and provide a URL instead of a metaproject name in the special comment line:
 
-# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/standard/icetray-start
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v2/icetray-start
 # #METAPROJECT http://icecube:skua@convey.icecube.wisc.edu/data/user/you/icerec.VXX-YY-ZZ
 
 # If you have a GridFTP certificate (https://wiki.icecube.wisc.edu/index.php/Using_GridFTP),
 # you can also use GridFTP to transfer the tarball:
 
-# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/standard/icetray-start
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v2/icetray-start
 # #METAPROJECT gsiftp://gridftp-users.icecube.wisc.edu/data/user/you/icerec.VXX-YY-ZZ
 
 # For local testing purposes you can also supply a build directory, e.g. on
 # /data/user:
 
-# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/standard/icetray-start
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v2/icetray-start
 # #METAPROJECT /data/user/you/metaprojects/icerec.VXX-YY-ZZ/build
 
 DIR=$(echo "${0%/*}")
