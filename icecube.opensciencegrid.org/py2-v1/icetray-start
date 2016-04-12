@@ -139,11 +139,15 @@ elif [ -x "$METAPROJECT/env-shell.sh" ]; then
 # 3) a tarball.
 else
 	# Fetch and unpack it if needed
-	if [ ! -d `basename $TARBALL .tar.gz` ]; then
+	if [ ! -e $(basename $TARBALL) ]; then
 		urlcopy $TARBALL .
+	fi
+	# Discover base directory name
+	build_dir=$(tar tzf $(basename $TARBALL) 2>/dev/null | head -n1 | cut -d/ -f1)
+	if [ ! -d $build_dir ]; then
 		tar xzf `basename $TARBALL`
 	fi
-	env_shell=$(basename $TARBALL .tar.gz)/env-shell.sh
+	env_shell=$build_dir/env-shell.sh
 fi
 
 # Set up a proxy if http URLs appear in the command line
