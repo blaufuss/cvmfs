@@ -26,17 +26,19 @@ def build(src,dest,**build_kwargs):
     # get versions of iceprod
     releases = {}
     url = 'https://api.github.com/repos/WIPACrepo/iceprod/releases'
-    with urlopen(url) as f:
-        data = json.loads(f.read())
-        for row in data:
-            releases[row['tag_name']] = row['tarball_url']
+    f = urlopen(url)
+    data = json.loads(f.read())
+    f.close()
+    for row in data:
+        releases[row['tag_name']] = row['tarball_url']
 
     for tag in sorted(releases, key=LooseVersion):
-        url = releases[tag]
+#        url = releases[tag]
+        url = 'git+git://github.com/WIPACrepo/iceprod.git#egg=iceprod'
         base_dir_name = os.path.join(os.path.join(dest,'iceprod'),tag)
 
         # reset environ
-        for k in os.environ:
+        for k in list(os.environ):
             del os.environ[k]
         for k in base_env:
             os.environ[k] = base_env[k]
@@ -52,15 +54,15 @@ def build(src,dest,**build_kwargs):
 
         # fill OS-specific directory with dirs
         for d in ('bin','etc','include','lib','libexec','man',
-                  'share','tools'):
+                  'share','tools','lib/python2.7/site-packages'):
             d = os.path.join(dir_name,d)
             if not os.path.exists(d):
                 os.makedirs(d)
         # do symlinks
-        for src,dest in (('lib','lib64'),('bin','sbin')):
-            dest = os.path.join(dir_name,dest)
-            if not os.path.exists(dest):
-                os.symlink(os.path.join(dir_name,src),dest)
+        for s,d in (('lib','lib64'),('bin','sbin')):
+            d = os.path.join(dir_name,d)
+            if not os.path.exists(d):
+                os.symlink(os.path.join(dir_name,s),d)
 
         tools['nginx']['1.9.9'](dir_name)
         tools['curl']['7.46.0'](dir_name)
@@ -69,20 +71,12 @@ def build(src,dest,**build_kwargs):
             # we need gzip -k
             tools['gzip']['1.6'](dir_name)
 
-        # reload env because ports is stupid
-        load_env(base_dir_name)
-
-        tools['pip']['install']('futures==3.0.3', dir_name)
-        tools['pip']['install']('pycurl==7.21.5', dir_name)
-        tools['pip']['install']('setproctitle==1.1.9', dir_name)
-
         tools['apsw']['3.9.2-r1'](dir_name)
 
-        # install iceprod
         tools['pip']['install'](url, dir_name)
 
     # add symlink to latest version
-    sym_name = os.path.join(os.path.join(dest,'iceprod'), 'current')
+    sym_name = os.path.join(os.path.join(dest,'iceprod'), 'latest')
     if os.path.exists(sym_name):
         os.unlink(sym_name)
-    os.symlink(sym_name, base_dir_name)
+    os.symlink(base_dir_name, sym_name)
