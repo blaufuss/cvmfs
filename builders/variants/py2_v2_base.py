@@ -32,7 +32,7 @@ def ports_packages(dir_name):
         tools['i3_ports']['manual_package'](pkg)
 
 def python_packages(dir_name):
-    packages = ['numpy==1.9.2','scipy==0.15.1','readline==6.2.4.1',
+    packages = ['setuptools==20.4','numpy==1.9.2','scipy==0.15.1','readline==6.2.4.1',
                 'ipython==3.1.0','pyfits==3.3','numexpr==2.4.3',
                 'Cython==0.22','PyMySQL==0.6.6','cffi==1.1.0',
                 'matplotlib==1.4.3','Sphinx==1.3.1','healpy==1.8.6',
