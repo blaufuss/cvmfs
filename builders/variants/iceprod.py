@@ -30,7 +30,8 @@ def build(src,dest,**build_kwargs):
     data = json.loads(f.read())
     f.close()
     for row in data:
-        releases[row['tag_name']] = row['tarball_url']
+        if not row['prerelease']:
+            releases[row['tag_name']] = row['tarball_url']
 
     for tag in sorted(releases, key=LooseVersion):
         url = releases[tag]
