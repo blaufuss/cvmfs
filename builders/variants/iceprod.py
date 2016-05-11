@@ -33,8 +33,7 @@ def build(src,dest,**build_kwargs):
         releases[row['tag_name']] = row['tarball_url']
 
     for tag in sorted(releases, key=LooseVersion):
-#        url = releases[tag]
-        url = 'git+git://github.com/WIPACrepo/iceprod.git#egg=iceprod'
+        url = releases[tag]
         base_dir_name = os.path.join(os.path.join(dest,'iceprod'),tag)
 
         # reset environ
