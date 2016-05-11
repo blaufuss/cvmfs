@@ -56,4 +56,5 @@ def versions():
     'offline-software': version_dict(partial(install,meta='offline-software')),
     'simulation': version_dict(partial(install,meta='simulation')),
     'icerec': version_dict(partial(install,meta='icerec')),
+    'combo': version_dict(partial(install,meta='combo')),
   }
