@@ -31,7 +31,8 @@ def install(dir_name,version=None):
             for m in ('sqlite3','zlib','bz2','_ssl','_curses','readline'):
                 if subprocess.call([os.path.join(dir_name,'bin','python'),
                                     '-c','import '+m]):
-                    os.remove(os.path.exists(os.path.join(dir_name,'bin','python')))
+                    if os.path.exists(os.path.join(dir_name,'bin','python')):
+                        os.remove(os.path.join(dir_name,'bin','python'))
                     raise Exception('failed to build with '+m+' support')
         finally:
             shutil.rmtree(tmp_dir)

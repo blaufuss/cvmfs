@@ -19,10 +19,7 @@ def ports_packages(dir_name):
 
     tools['i3_ports']['sync']()
 
-    packages = []#['Minuit2_5.24.00']
-
-    #if os.environ['OS_ARCH'] != 'Ubuntu_14_x86_64':
-    #    packages += ['root_5.34.18 +nox11']
+    packages = []
 
     if os.uname()[0].lower() == 'linux':
         packages += ['geant4_4.9.5','pythia_root_6.4.16',
