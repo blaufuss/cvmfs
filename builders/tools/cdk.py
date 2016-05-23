@@ -9,7 +9,7 @@ from build_util import wget, unpack, version_dict
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libcdk.a')):
-        version = '5.0-20150928'
+        version = '5.0-20160131'
         print('installing cdk version',version)
         name = 'cdk.tar.gz'
         try:

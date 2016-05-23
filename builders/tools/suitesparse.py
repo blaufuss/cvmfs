@@ -35,7 +35,7 @@ def install(dir_name,version=None):
                 f.write('LAPACK = -L'+os.path.join(dir_name,'lib')+' -lopenblas\n')
             finally:
                 f.close()
-            if subprocess.call(['make'],cwd=suitesparse_dir):
+            if subprocess.call(['make','library'],cwd=suitesparse_dir):
                 raise Exception('suitesparse failed to make')
             if subprocess.call(['make','install'],cwd=suitesparse_dir):
                 raise Exception('suitesparse failed to install')

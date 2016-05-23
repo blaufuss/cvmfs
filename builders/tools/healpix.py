@@ -8,7 +8,7 @@ import glob
 
 from build_util import wget, unpack, version_dict
 
-def install(dir_name,version=None,i3ports=False):
+def install(dir_name,version=None,i3ports=False,for_clang=False):
     if not os.path.exists(os.path.join(dir_name,'lib','libhealpix_cxx.so')):
         print('installing healpix version',version)
         try:
@@ -28,7 +28,7 @@ def install(dir_name,version=None,i3ports=False):
             # the sourceforge retry
             wget(url,path,retry=5)
             unpack(path,tmp_dir)
-            
+
             # make C healpix
             healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src','C','subs')
             if i3ports:
@@ -45,12 +45,17 @@ def install(dir_name,version=None,i3ports=False):
                                 'LIBDIR='+os.path.join(dir_name,'lib')
                                ],cwd=healpix_dir):
                 raise Exception('healpix C failed to install')
-            
+
             # special environ
             env = dict(os.environ)
-            env['CFLAGS'] = '-fno-tree-fre -fPIC'
-            env['CPPFLAGS'] = '-fno-tree-fre -fPIC'
-            
+            if for_clang:
+                env['CFLAGS'] = '-fPIC'
+                env['CPPFLAGS'] = '-fPIC'
+                env['LDFLAGS'] = '-lgcc_s' # the gfortran we use when installing clang seems to need this
+            else:
+                env['CFLAGS'] = '-fno-tree-fre -fPIC'
+                env['CPPFLAGS'] = '-fno-tree-fre -fPIC'
+
             # make CXX healpix
             healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src','cxx')
             if subprocess.call(['autoconf'],cwd=healpix_dir):

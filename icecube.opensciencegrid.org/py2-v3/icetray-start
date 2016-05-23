@@ -1,0 +1,165 @@
+#!/bin/sh
+
+# This script can be used a shebang to run an icetray python script directly,
+# using an official metaproject distributed via CVMFS, a custom metaproject
+# stored in a tarball, or a custom metaproject build on a networked filesystem.
+#
+# To use it with a CVMFS metaproject, place the following magic shebang line 
+# and comment line at the top of your python script:
+
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v3/icetray-start
+# #METAPROJECT metaproject/VXX-YY-ZZ
+
+# To use a custom metaproject, make tarballs for each OS/architecture 
+# combination on which you expect to run, e.g.
+#
+# /data/user/you/icerec.VXX-YY-ZZ.RHEL_6_x86_64.tar.gz
+# /data/user/you/icerec.VXX-YY-ZZ.RHEL_5_x86_64.tar.gz
+#
+# and provide a URL instead of a metaproject name in the special comment line:
+
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v3/icetray-start
+# #METAPROJECT http://icecube:skua@convey.icecube.wisc.edu/data/user/you/icerec.VXX-YY-ZZ
+
+# If you have a GridFTP certificate (https://wiki.icecube.wisc.edu/index.php/Using_GridFTP),
+# you can also use GridFTP to transfer the tarball:
+
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v3/icetray-start
+# #METAPROJECT gsiftp://gridftp-users.icecube.wisc.edu/data/user/you/icerec.VXX-YY-ZZ
+
+# For local testing purposes you can also supply a build directory, e.g. on
+# /data/user:
+
+# #!/bin/sh /cvmfs/icecube.opensciencegrid.org/py2-v3/icetray-start
+# #METAPROJECT /data/user/you/metaprojects/icerec.VXX-YY-ZZ/build
+
+DIR=$(echo "${0%/*}")
+SROOTBASE=$(cd "$DIR" && echo "$(pwd -L)")
+
+# Site-specific setup
+if [ -n "$OSG_GRID" ]; then
+	source $OSG_GRID/setup.sh
+fi
+# IceTray setup
+eval `$SROOTBASE/setup.sh`
+
+export SCRATCH_DIR=${_CONDOR_SCRATCH_DIR:-$PWD}
+cd $SCRATCH_DIR
+
+# Attempt to find a caching HTTP proxy
+function get_http_proxy()
+{
+	if [ ! -z "$_get_http_proxy" ]; then
+		return
+	fi
+	WGET_CMD="wget --spider -q -T1 -t1"
+
+	# Try OSG site proxy
+	export OSG_SQUID_LOCATION=${OSG_SQUID_LOCATION:-UNAVAILABLE}
+	if [ "$OSG_SQUID_LOCATION" != UNAVAILABLE ]; then
+	  export http_proxy=$OSG_SQUID_LOCATION
+	  $WGET_CMD http://prod-exe.icecube.wisc.edu || unset http_proxy
+	fi
+
+	# Try GLIDEIN proxy
+	if [ -z "$http_proxy" ]; then
+	  export GLIDEIN_Proxy_URL=${GLIDEIN_Proxy_URL:-UNAVAILABLE}
+	  if ( [ "$GLIDEIN_Proxy_URL" != UNAVAILABLE ] && [ "$GLIDEIN_Proxy_URL" != None ] ); then
+	    export http_proxy=$GLIDEIN_Proxy_URL
+	    $WGET_CMD http://prod-exe.icecube.wisc.edu || unset http_proxy
+	  fi
+	fi
+
+	# Try ATLAS Frontier proxies
+	if [ -z "$http_proxy" ]; then
+	  export ATLAS_FRONTIER_CONF=${ATLAS_FRONTIER_CONF:-UNAVAILABLE}
+	  if [ "$ATLAS_FRONTIER_CONF" != UNAVAILABLE ]; then
+	    VALUES=`echo ${ATLAS_FRONTIER_CONF}|python -c "import sys;print ' '.join([l.split('=')[1] for l in sys.stdin.read().strip('\"()').split(')(') if l.startswith('proxy')])"`
+	    for VALUE in ${VALUES}
+	    do
+	      export http_proxy=$VALUE
+	      $WGET_CMD http://prod-exe.icecube.wisc.edu || unset http_proxy
+	      if [ -n "$http_proxy" ]; then
+	        break;
+	      fi
+	    done
+	    unset VALUES
+	  fi
+	fi
+
+	unset WGET_CMD
+	export _get_http_proxy=1
+}
+
+function urlcopy_item()
+{
+	scheme=`echo $1 | cut -d: -f1`
+	source=$1
+	dest=$2
+	case "$scheme" in 
+		"http" | "https" | "ftp")
+			get_http_proxy
+			opts="-q"
+			if [ "$dest" != "." ]; then
+				opts="$opts -O $dest"
+			fi
+			wget $opts $source;;
+		"gsiftp" | "file")
+			opts="-nodcau -rst"
+			if [ "$dest" = "." ]; then
+				dest=file://$PWD/`basename $1`
+			fi
+			globus-url-copy $opts $source $dest;;
+		*)
+			cp $source $dest;;
+	esac
+}
+
+function urlcopy()
+{
+	eval dest=\${$#}
+	while [ $# -gt 1 ]; do
+		urlcopy_item $1 $dest
+		shift
+	done
+}
+
+# Parse metaproject specification
+METAPROJECT=$(awk -F ' ' '/^#METAPROJECT:.*/ { sub(/:/, " "); }; /^#METAPROJECT.*/ {mp = $2; gsub(/[ \t]/, "", mp); print mp}' $1)
+TARBALL=$METAPROJECT.$OS_ARCH.tar.gz
+
+unset env_shell
+# Find the appropriate environment
+# 1) a pre-built metaproject in CVMFS
+if [ -x "$SROOT/metaprojects/$METAPROJECT/env-shell.sh" ]; then
+	env_shell=$SROOT/metaprojects/$METAPROJECT/env-shell.sh
+# 2) a build directory (hopefully the architecture matches)
+elif [ -x "$METAPROJECT/env-shell.sh" ]; then
+	env_shell=$METAPROJECT/env-shell.sh
+# 3) a tarball.
+else
+	# Fetch and unpack it if needed
+	if [ ! -e $(basename $TARBALL) ]; then
+		urlcopy $TARBALL .
+	fi
+	# Discover base directory name
+	build_dir=$(tar tzf $(basename $TARBALL) 2>/dev/null | head -n1 | cut -d/ -f1)
+	if [ ! -d $build_dir ]; then
+		tar xzf `basename $TARBALL`
+	fi
+	env_shell=$build_dir/env-shell.sh
+fi
+
+# Set up a proxy if http URLs appear in the command line
+if echo "$@" | grep -q 'http://'; then
+	get_http_proxy
+fi
+
+case $(echo `basename $1` | awk -F . '{ print $NF }') in
+	"sh")
+		exec $env_shell sh $@;;
+	*)
+		exec $env_shell python $@;;
+esac
+	
+
