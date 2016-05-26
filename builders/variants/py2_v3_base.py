@@ -35,7 +35,7 @@ def python_packages(dir_name):
     packages = ['setuptools==20.4','numpy==1.9.2','scipy==0.15.1','readline==6.2.4.1',
                 'ipython==3.1.0','pyfits==3.3','numexpr==2.4.3',
                 'Cython==0.22','PyMySQL==0.6.6','cffi==1.1.0',
-                'matplotlib==1.4.3','Sphinx==1.3.1',
+                'matplotlib==1.4.3','Sphinx==1.3.1','healpy==1.8.6',
                 'spectrum==0.6.0','urwid==1.3.0',
                 'urllib3==1.10.4','requests==2.7.0',
                 'jsonschema==2.5.1',
@@ -51,11 +51,6 @@ def python_packages(dir_name):
 
     for pkg in packages:
         tools['pip']['install'](pkg)
-
-    orig_env = os.environ
-    os.environ['LDFLAGS'] = '-lgcc_s'
-    tools['pip']['install']('healpy==1.8.6')
-    os.environ = orig_env
 
     # fails to install:
     # # gnuplot-py is special
@@ -179,6 +174,7 @@ def build(src,dest,**build_kwargs):
     # build core software
     tools['m4']['1.4.17'](dir_name)
     tools['libtool']['2.4.6'](dir_name)
+    tools['pkg-config']['0.29.1'](dir_name)
     tools['libffi']['3.2.1'](dir_name)
     tools['libarchive']['3.1.2'](dir_name)
     tools['libxml2']['2.9.2'](dir_name)
@@ -240,7 +236,7 @@ def build(src,dest,**build_kwargs):
     tools['hdf5']['1.8.15'](dir_name)
     tools['erfa']['1.2.0'](dir_name)
     tools['pal']['master'](dir_name)
-    tools['healpix']['3.20'](dir_name,for_clang=True) # did not compile
+    tools['healpix']['3.20'](dir_name,for_clang=True,i3ports=False)
 
     # build i3ports and difficult software
     tools['i3_ports']['base'](dir_name)
