@@ -71,30 +71,6 @@ Index: llvm/projects/libcxx/lib/CMakeLists.txt
  add_flags_if_supported(-fPIC)
 """
 
-# At the time of writing it's 2015. Let's at least turn on features from 2011 by default.
-# Using "-std=c++14" would also make a fair bit of sense.
-cxx11_patch = """
-Index: llvm/tools/clang/lib/Driver/Tools.cpp
-===================================================================
---- llvm/tools/clang/lib/Driver/Tools.cpp    (revision 248309)
-+++ llvm/tools/clang/lib/Driver/Tools.cpp    (working copy)
-@@ -3881,8 +3881,12 @@
-     if (!types::isCXX(InputType))
-       Args.AddAllArgsTranslated(CmdArgs, options::OPT_std_default_EQ, "-std=",
-                                 /*Joined=*/true);
--    else if (IsWindowsMSVC)
--      ImplyVCPPCXXVer = true;
-+    else{
-+      if (IsWindowsMSVC)
-+        ImplyVCPPCXXVer = true;
-+      else
-+        CmdArgs.push_back("-std=c++11");
-+    }
-
-     Args.AddLastArg(CmdArgs, options::OPT_ftrigraphs,
-                     options::OPT_fno_trigraphs);
-"""
-
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','clang')):
         print('installing clang version',version)
@@ -140,8 +116,6 @@ def install(dir_name,version=None):
             else:
                 if subprocess.call("echo '"+cmakelists_patch+"' | patch -p1",cwd=clang_dir,shell=True):
                     raise Exception('clang could not be patched')
-            if subprocess.call("echo '"+cxx11_patch+"' | patch -p1",cwd=clang_dir,shell=True):
-                raise Exception('clang could not be patched')
 
             # create an out-of-source build directory
             clang_build_dir = os.path.join(tmp_dir, 'llvm_build')
