@@ -8,6 +8,22 @@ import glob
 
 from build_util import wget, unpack, version_dict
 
+healpix_c_makefile_patch = """
+Index: llvm/projects/libcxx/lib/CMakeLists.txt
+===================================================================
+--- Healpix_3.20/src/C/subs/Makefile.orig	2014-03-19 11:04:58.000000000 -0600
++++ Healpix_3.20/src/C/subs/Makefile	2016-05-26 15:45:17.000000000 -0600
+@@ -107,7 +107,7 @@
+ shared: libchealpix$(SHLIB_SUFFIX) #tests
+
+ libchealpix$(SHLIB_SUFFIX) : $(OBJD)
+-	$(SHLIB_LD) -o $@ $(OBJD)
++	$(SHLIB_LD) -o $@ $(OBJD) $(CFITSIO_LIBS)
+
+ # Make the dynamic (Mac) library itself
+ dynamic: libchealpix$(DYLIB_SUFFIX) #tests
+"""
+
 def install(dir_name,version=None,i3ports=False,for_clang=False):
     if not os.path.exists(os.path.join(dir_name,'lib','libhealpix_cxx.so')):
         print('installing healpix version',version)
@@ -31,6 +47,10 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
 
             # make C healpix
             healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src','C','subs')
+
+            if subprocess.call("echo '"+healpix_c_makefile_patch+"' | patch -p4",cwd=healpix_dir,shell=True):
+                raise Exception('healpix C could not be patched')
+
             if i3ports:
                 i3ports_dir = os.environ['I3_PORTS']
             else:
@@ -46,6 +66,25 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
                                ],cwd=healpix_dir):
                 raise Exception('healpix C failed to install')
 
+            # write a pkg-config file (healpy needs this later on)
+            pkg_config = """# HEALPix/C pkg-config file
+
+prefix={0}
+libdir=${{prefix}}/lib
+includedir=${{prefix}}/include
+
+Name: chealpix
+Description: C library for HEALPix (Hierarchical Equal-Area iso-Latitude) pixelisation of the sphere
+Version: {1}
+URL: http://healpix.sourceforge.net
+Requires: cfitsio
+Libs: -L${{prefix}}/lib -lchealpix
+Cflags: -I${{prefix}}/include -fPIC
+""".format(dir_name, version)
+            pkgconfig_file = open(os.path.join(dir_name,'lib','pkgconfig','chealpix.pc'), "w")
+            pkgconfig_file.write(pkg_config)
+            pkgconfig_file.close()
+
             # special environ
             env = dict(os.environ)
             if for_clang:
@@ -55,6 +94,11 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
             else:
                 env['CFLAGS'] = '-fno-tree-fre -fPIC'
                 env['CPPFLAGS'] = '-fno-tree-fre -fPIC'
+
+            if for_clang:
+                compiler = os.environ['CC']
+            else:
+                compiler = 'gcc'
 
             # make CXX healpix
             healpix_dir = os.path.join(tmp_dir,'Healpix_'+version,'src','cxx')
@@ -73,7 +117,7 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
             if subprocess.call(['make'], cwd=healpix_dir):
                 raise Exception('healpix CXX failed to make')
             lib_dir = os.path.join(healpix_dir,'auto','lib')
-            link_cmd = ['gcc', '-shared', '-o',
+            link_cmd = [compiler, '-shared', '-o',
                         os.path.join(lib_dir, 'libhealpix_cxx.so'),
                         '-L'+os.path.join(i3ports_dir,'lib'),'-lcfitsio',
                         '-Wl,--whole-archive']
@@ -94,6 +138,32 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
                                        os.path.join(dir_name,p,f)]
                                        ,cwd=healpix_dir):
                         raise Exception('healpix CXX failed to install %s'%os.path.join(root,f))
+
+            if for_clang:
+                additional_flags="-lgcc_s"
+            else:
+                additional_flags=""
+
+            # write a pkg-config file (healpy needs this later on)
+            pkg_config = """# HEALPix/C++ pkg-config file
+
+prefix={0}
+libdir=${{prefix}}/lib
+includedir=${{prefix}}/include/healpix_cxx
+
+Name: chealpix
+Description: C++ library for HEALPix (Hierarchical Equal-Area iso-Latitude) pixelisation of the sphere
+Version: {1}
+URL: http://healpix.sourceforge.net
+Requires: cfitsio
+Libs: -L${{prefix}}/lib -lhealpix_cxx {2}
+Cflags: -I${{prefix}}/include/healpix_cxx -fPIC
+""".format(dir_name, version, additional_flags)
+            pkgconfig_file = open(os.path.join(dir_name,'lib','pkgconfig','healpix_cxx.pc'), "w")
+            pkgconfig_file.write(pkg_config)
+            pkgconfig_file.close()
+
+
         finally:
             shutil.rmtree(tmp_dir)
 
