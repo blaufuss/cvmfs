@@ -16,7 +16,7 @@ except ImportError:
 def install(dir_name,version=None,for_clang=False):
     if not os.path.exists(os.path.join(dir_name,'lib','libboost_python.so')):
         if for_clang:
-            print('installing boost version',version,' (for clang/c++11)')
+            print('installing boost version',version,' (for clang/c++14)')
         else:
             print('installing boost version',version)
         name = 'boost_'+version.replace('.','_')+'.tar.gz'
@@ -31,7 +31,7 @@ def install(dir_name,version=None,for_clang=False):
                 if subprocess.call([os.path.join(boost_dir,'bootstrap.sh'),
                                     '--prefix='+dir_name,'--with-toolset=clang'],cwd=boost_dir):
                     raise Exception('boost failed to bootstrap')
-                if subprocess.call([os.path.join(boost_dir,'b2'),'install','-j'+str(cpu_cores),'toolset=clang','cxxflags="-std=c++11"'],cwd=boost_dir):
+                if subprocess.call([os.path.join(boost_dir,'b2'),'install','-j'+str(cpu_cores),'toolset=clang','cxxflags="-std=c++14"'],cwd=boost_dir):
                     raise Exception('boost failed to b2 install')
             else:
                 if subprocess.call([os.path.join(boost_dir,'bootstrap.sh'),

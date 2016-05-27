@@ -72,7 +72,6 @@ Index: llvm/projects/libcxx/lib/CMakeLists.txt
 """
 
 # At the time of writing it's 2015. Let's at least turn on features from 2011 by default.
-# Using "-std=c++14" would also make a fair bit of sense.
 cxx11_patch = """
 Index: llvm/tools/clang/lib/Driver/Tools.cpp
 ===================================================================
@@ -88,7 +87,7 @@ Index: llvm/tools/clang/lib/Driver/Tools.cpp
 +      if (IsWindowsMSVC)
 +        ImplyVCPPCXXVer = true;
 +      else
-+        CmdArgs.push_back("-std=c++11");
++        CmdArgs.push_back("-std=c++14");
 +    }
 
      Args.AddLastArg(CmdArgs, options::OPT_ftrigraphs,
