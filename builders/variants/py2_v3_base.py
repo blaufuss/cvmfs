@@ -38,7 +38,8 @@ def python_packages(dir_name):
                 'matplotlib==1.4.3','Sphinx==1.3.1','healpy==1.8.6',
                 'spectrum==0.6.0','urwid==1.3.0',
                 'urllib3==1.10.4','requests==2.7.0',
-                'jsonschema==2.5.1','virtualenv==15.0.2'
+                'jsonschema==2.5.1','virtualenv==15.0.2',
+                'requests==2.10.0'
                ]
 
     if os.environ['OS_ARCH'] == 'RHEL_5_x86_64':
