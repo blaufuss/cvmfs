@@ -38,7 +38,7 @@ def python_packages(dir_name):
                 'matplotlib==1.4.3','Sphinx==1.3.1','healpy==1.8.6',
                 'spectrum==0.6.0','urwid==1.3.0',
                 'urllib3==1.10.4','requests==2.7.0',
-                'jsonschema==2.5.1',
+                'jsonschema==2.5.1','virtualenv==15.0.2'
                ]
 
     if os.environ['OS_ARCH'] == 'RHEL_5_x86_64':
@@ -153,8 +153,8 @@ def build(src,dest,**build_kwargs):
 
         # build some more clang build requirements (basically just a modern python and cmake)
         tools['xz']['5.2.2'](clang_bootstrap_dir_name)
-        tools['sqlite']['3081002'](clang_bootstrap_dir_name)
         tools['readline']['6.3'](clang_bootstrap_dir_name)
+        tools['sqlite']['3081002'](clang_bootstrap_dir_name)
         tools['python']['2.7.10'](clang_bootstrap_dir_name)
         os.environ['PYTHONPATH']=os.path.join(clang_bootstrap_dir_name,'lib/python2.7/site-packages')
         tools['cmake']['3.5.2'](clang_bootstrap_dir_name)
@@ -178,11 +178,11 @@ def build(src,dest,**build_kwargs):
     tools['libffi']['3.2.1'](dir_name)
     tools['libarchive']['3.1.2'](dir_name)
     tools['libxml2']['2.9.2'](dir_name)
+    tools['readline']['6.3'](dir_name)
     tools['sqlite']['3081002'](dir_name)
     tools['tcl_tk']['8.6.4'](dir_name)
     tools['cmake']['3.5.2'](dir_name)
     tools['zmq']['4.1.4'](dir_name)
-    tools['readline']['6.3'](dir_name)
     tools['python']['2.7.10'](dir_name)
     tools['pip']['latest'](dir_name)
 
@@ -198,10 +198,13 @@ def build(src,dest,**build_kwargs):
     tools['isl']['0.14'](dir_name)
     tools['bison']['3.0.4'](dir_name)
     tools['flex']['2.6.0'](dir_name)
-    # downside to this: this will still pollute our installation with g++/libstdc++ stuff
-    tools['gcc']['6.1.0'](dir_name,gfortran_only=True) # clang cannot compile gcc 5.2.0 in its c++11 mode (which we chose to make the default)
 
-    # clean up after gcc (we specified it should only install fortran and c, but that setting seems to be a lie)
+    tools['gfortran']['6.1.0'](dir_name)
+    # clean up after gcc/gofortran (we specified it should only install fortran and c, but that setting seems to be a lie)
+    if (os.path.lexists(os.path.join(dir_name,'bin/cpp'))):
+        os.remove(os.path.join(dir_name,'bin/cpp'))
+    if (os.path.lexists(os.path.join(dir_name,'bin/gcc'))):
+        os.remove(os.path.join(dir_name,'bin/gcc'))
     if (os.path.lexists(os.path.join(dir_name,'bin/g++'))):
         os.remove(os.path.join(dir_name,'bin/g++'))
     if (os.path.lexists(os.path.join(dir_name,'bin/c++'))):

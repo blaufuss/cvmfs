@@ -1,5 +1,6 @@
 """SQLite build/install"""
 
+import copy
 import os
 import subprocess
 import tempfile
@@ -29,12 +30,15 @@ def install(dir_name,version=None):
             wget(url,path)
             unpack(path,tmp_dir)
             sqlite_dir = os.path.join(tmp_dir,'sqlite-autoconf-'+str(version))
+
+            mod_env = copy.deepcopy(os.environ)
+            mod_env['CFLAGS'] = '-I'+os.path.join(dir_name,'include')
             if subprocess.call([os.path.join(sqlite_dir,'configure'),
-                                '--prefix',dir_name],cwd=sqlite_dir):
+                                '--prefix='+dir_name],cwd=sqlite_dir,env=mod_env):
                 raise Exception('sqlite failed to configure')
-            if subprocess.call(['make'],cwd=sqlite_dir):
+            if subprocess.call(['make'],cwd=sqlite_dir,env=mod_env):
                 raise Exception('sqlite failed to make')
-            if subprocess.call(['make','install'],cwd=sqlite_dir):
+            if subprocess.call(['make','install'],cwd=sqlite_dir,env=mod_env):
                 raise Exception('sqlite failed to install')
         finally:
             shutil.rmtree(tmp_dir)
