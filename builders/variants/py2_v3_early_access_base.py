@@ -100,8 +100,8 @@ def create_os_specific_dirs(dir_name):
 def build(src,dest,**build_kwargs):
     """The main builder"""
     # first, make sure the base dir is there
-    dir_name = os.path.join(dest,'py2-v3')
-    copy_src(os.path.join(src,'py2-v3'),dir_name)
+    dir_name = os.path.join(dest,'py2-v3_early_access')
+    copy_src(os.path.join(src,'py2-v3_early_access'),dir_name)
 
     # now, do the OS-specific stuff
     load_env(dir_name)
@@ -245,10 +245,10 @@ def build(src,dest,**build_kwargs):
     # build i3ports and difficult software
     tools['i3_ports']['base'](dir_name)
     # reload env because ports is stupid
-    load_env(os.path.join(dest,'py2-v3'))
+    load_env(os.path.join(dest,'py2-v3_early_access'))
     #ports_packages(dir_name)  # don't even bother yet...
     # reload env because ports is stupid
-    load_env(os.path.join(dest,'py2-v3'))
+    load_env(os.path.join(dest,'py2-v3_early_access'))
 
     # build python software
     python_packages(dir_name)
