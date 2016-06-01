@@ -10,8 +10,7 @@ from build_util import wget, version_dict
 
 def install_pkg(package,prefix=None,upgrade=False):
     print('installing python package',package)
-    options = ['--no-cache-dir',
-               '--allow-external', package,
+    options = ['--no-cache-dir', package,
               ]
     if prefix:
         options.extend(['--prefix',prefix])

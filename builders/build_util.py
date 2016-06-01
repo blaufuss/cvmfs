@@ -51,6 +51,22 @@ def unpack(src,dest,flags=['-zx']):
     if subprocess.call(cmd):
         raise Exception('unpack failed: %s'%' '.join(cmd))
 
+def unpack_bz2(src,dest,flags=['-jx']):
+    cmd = ['tar']
+    if flags:
+        cmd += flags
+    cmd += ['-f',src,'-C',dest]
+    if subprocess.call(cmd):
+        raise Exception('unpack failed: %s'%' '.join(cmd))
+
+def unpack_xz(src,dest,flags=['-Jx']):
+    cmd = ['tar']
+    if flags:
+        cmd += flags
+    cmd += ['-f',src,'-C',dest]
+    if subprocess.call(cmd):
+        raise Exception('unpack failed: %s'%' '.join(cmd))
+
 def unzip(src,dest,flags=['-oq']):
     cmd = ['unzip']
     if flags:

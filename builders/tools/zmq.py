@@ -19,7 +19,7 @@ def install(dir_name,version=None):
             unpack(path,tmp_dir)
             zmq_dir = os.path.join(tmp_dir,'zeromq-'+version)
             if subprocess.call([os.path.join(zmq_dir,'configure'),
-                                '--prefix',dir_name],cwd=zmq_dir):
+                                '--prefix',dir_name,'--without-libsodium'],cwd=zmq_dir):
                 raise Exception('zmq failed to configure')
             if subprocess.call(['make'],cwd=zmq_dir):
                 raise Exception('zmq failed to make')
