@@ -26,7 +26,13 @@ def build(src,dest,svn_up=None,**build_kwargs):
     kwargs = {}
     if svn_up is not None:
         kwargs['svn_up'] = svn_up
+
+    # releases
     tools['i3_metaproject']['offline-software']['V15-08-00'](dir_name,**kwargs)
+    tools['i3_metaproject']['simulation']['V05-00-00'](dir_name,**kwargs)
+    tools['i3_metaproject']['icerec']['V05-00-00'](dir_name,**kwargs)
+
+    # trunks
     #tools['i3_metaproject']['offline-software']['trunk'](dir_name,**kwargs)
     #tools['i3_metaproject']['simulation']['trunk'](dir_name,**kwargs)
     #tools['i3_metaproject']['icerec']['trunk'](dir_name,**kwargs)
