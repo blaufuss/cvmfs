@@ -40,21 +40,6 @@ toolchain_patch = """
 
 # The libc++ build system is hard coded to insist on linking against libgcc_s,
 # but we plan to have a perfectly good libunwind which we would rather use.
-cmakelists_patch_3_7 = """
-Index: llvm/projects/libcxx/lib/CMakeLists.txt
-===================================================================
---- llvm/projects/libcxx/lib/CMakeLists.txt     (revision 248365)
-+++ llvm/projects/libcxx/lib/CMakeLists.txt     (working copy)
-@@ -61,7 +61,7 @@
- append_if(libraries LIBCXX_HAS_C_LIB c)
- append_if(libraries LIBCXX_HAS_M_LIB m)
- append_if(libraries LIBCXX_HAS_RT_LIB rt)
--append_if(libraries LIBCXX_HAS_GCC_S_LIB gcc_s)
-+append_if(libraries LIBCXX_HAS_GCC_S_LIB unwind)
-
- if (LIBCXX_COVERAGE_LIBRARY)
-   target_link_libraries(cxx ${LIBCXX_COVERAGE_LIBRARY})
-"""
 cmakelists_patch = """
 Index: llvm/projects/libcxx/lib/CMakeLists.txt
 ===================================================================
@@ -133,12 +118,8 @@ def install(dir_name,version=None):
 
             if subprocess.call("echo '"+toolchain_patch+"' | patch -p1",cwd=clang_dir,shell=True):
                 raise Exception('clang could not be patched')
-            if version=="3.7.0":
-                if subprocess.call("echo '"+cmakelists_patch_3_7+"' | patch -p1",cwd=clang_dir,shell=True):
-                    raise Exception('clang could not be patched')
-            else:
-                if subprocess.call("echo '"+cmakelists_patch+"' | patch -p1",cwd=clang_dir,shell=True):
-                    raise Exception('clang could not be patched')
+            if subprocess.call("echo '"+cmakelists_patch+"' | patch -p1",cwd=clang_dir,shell=True):
+                raise Exception('clang could not be patched')
             if subprocess.call("echo '"+cxx11_patch+"' | patch -p1",cwd=clang_dir,shell=True):
                 raise Exception('clang could not be patched')
 
