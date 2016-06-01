@@ -27,6 +27,11 @@ def install(dir_name,version=None):
             unpack(path,tmp_dir)
             globus_dir = os.path.join(tmp_dir,name.rsplit('.',2)[0])
             if int(version[0]) <= 5:
+#                if subprocess.call(['cpanm','--local-lib',dir_name,
+#                                    'Archive::Tar','Compress::Zlib','Digest::MD5',
+#                                    'File::Spec','IO::Zlib','Pod::Parser',
+#                                    'Test::Simple','XML::Parser']):
+#                    raise Exception('failed to install globus perl modules')
                 if subprocess.call([os.path.join(globus_dir,'configure'),
                                     '--prefix',dir_name],cwd=globus_dir):
                     raise Exception('globus failed to configure')

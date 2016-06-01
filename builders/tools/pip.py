@@ -8,12 +8,14 @@ import glob
 
 from build_util import wget, version_dict
 
-def install_pkg(package,prefix=None):
+def install_pkg(package,prefix=None,upgrade=False):
     print('installing python package',package)
     options = ['--no-cache-dir', package,
               ]
     if prefix:
         options.extend(['--prefix',prefix])
+    if upgrade:
+        options.append('--upgrade')
     if subprocess.call(['pip','install']+options+[package]):
         raise Exception(package+' failed to install')
 

@@ -11,7 +11,7 @@ def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libcdk.a')):
         version = '5.0-20160131'
         print('installing cdk version',version)
-        name = 'cdk.tar.gz'
+        name = 'cdk-'+version+'.tgz'
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
