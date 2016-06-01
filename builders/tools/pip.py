@@ -27,7 +27,7 @@ def install_pip(dir_name,version=None):
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
             wget('https://bootstrap.pypa.io/get-pip.py',path)
-            if subprocess.call([os.path.join(dir_name,'bin','python'),path]):
+            if subprocess.call([os.path.join(dir_name,'bin','python'),path,'--quiet']):
                 raise Exception('pip failed to install')
         finally:
             shutil.rmtree(tmp_dir)
