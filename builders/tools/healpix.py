@@ -31,7 +31,7 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
             tmp_dir = tempfile.mkdtemp()
             name = 'README'
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('http://iweb.dl.sourceforge.net/project/healpix/Healpix_'+version,name)
+            url = os.path.join('http://downloads.sourceforge.net/project/healpix/Healpix_'+version,name)
             wget(url,path)
             for line in open(path):
                 if 'tar.gz' in line:
@@ -40,7 +40,7 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
             else:
                 raise Exception('healpix: cannot determine tarball name')
             print 'NAME:',name
-            url = os.path.join('http://iweb.dl.sourceforge.net/project/healpix/Healpix_'+version,name)
+            url = os.path.join('http://downloads.sourceforge.net/project/healpix/Healpix_'+version,name)
             # the sourceforge retry
             wget(url,path,retry=5)
             unpack(path,tmp_dir)

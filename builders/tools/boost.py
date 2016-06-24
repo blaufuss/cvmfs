@@ -23,7 +23,7 @@ def install(dir_name,version=None,for_clang=False):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('http://iweb.dl.sourceforge.net/project/boost/boost',version,name)
+            url = os.path.join('http://downloads.sourceforge.net/project/boost/boost',version,name)
             wget(url,path)
             unpack(path,tmp_dir)
             boost_dir = os.path.join(tmp_dir,'boost_'+version.replace('.','_'))

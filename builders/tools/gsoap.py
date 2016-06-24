@@ -14,12 +14,12 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('http://iweb.dl.sourceforge.net/project/gsoap2/gSOAP',name)
+            url = os.path.join('http://downloads.sourceforge.net/project/gsoap2/gSOAP',name)
             wget(url,path)
             unzip(path,tmp_dir)
             gsoap_dir = os.path.join(tmp_dir,'gsoap-'+'.'.join(version.split('.')[:2]))
             if subprocess.call([os.path.join(gsoap_dir,'configure'),
-                                '--prefix',dir_name],cwd=gsoap_dir):
+                                '--prefix',dir_name,'--disable-static'],cwd=gsoap_dir):
                 raise Exception('gsoap failed to configure')
             if subprocess.call(['make'],cwd=gsoap_dir):
                 raise Exception('gsoap failed to make')

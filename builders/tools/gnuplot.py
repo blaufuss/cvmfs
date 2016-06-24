@@ -14,7 +14,7 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('http://iweb.dl.sourceforge.net/project/gnuplot/gnuplot/',version,name)
+            url = os.path.join('http://downloads.sourceforge.net/project/gnuplot/gnuplot/',version,name)
             wget(url,path)
             unpack(path,tmp_dir)
             gnuplot_dir = os.path.join(tmp_dir,'gnuplot-'+version)

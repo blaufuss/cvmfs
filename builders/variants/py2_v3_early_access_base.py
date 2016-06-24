@@ -55,7 +55,7 @@ def python_packages(dir_name):
 
     # fails to install:
     # # gnuplot-py is special
-    # tools['pip']['install']('http://iweb.dl.sourceforge.net/project/gnuplot-py/Gnuplot-py/1.8/gnuplot-py-1.8.tar.gz')
+    # tools['pip']['install']('http://downloads.sourceforge.net/project/gnuplot-py/Gnuplot-py/1.8/gnuplot-py-1.8.tar.gz')
 
     # fails to install:
     # # pyMinuit2 is special

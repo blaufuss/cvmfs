@@ -15,9 +15,9 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             tcl_path = os.path.join(tmp_dir,tcl_name)
-            tcl_url = os.path.join('http://iweb.dl.sourceforge.net/project/tcl/Tcl',version,tcl_name)
+            tcl_url = os.path.join('http://downloads.sourceforge.net/project/tcl/Tcl/',version,tcl_name)
             tk_path = os.path.join(tmp_dir,tk_name)
-            tk_url = os.path.join('http://iweb.dl.sourceforge.net/project/tcl/Tcl',version,tk_name)
+            tk_url = os.path.join('http://downloads.sourceforge.net/project/tcl/Tcl/',version,tk_name)
             wget(tcl_url,tcl_path)
             wget(tk_url,tk_path)
             unpack(tcl_path,tmp_dir)
