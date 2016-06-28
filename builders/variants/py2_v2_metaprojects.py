@@ -15,7 +15,7 @@ def build(src,dest,svn_up=None,**build_kwargs):
     # first, make sure the base dir is there
     dir_name = os.path.join(dest,'py2-v2')
     if not os.path.isdir(dir_name):
-    	raise Exception('base does not exist')
+        raise Exception('base does not exist')
     
     # now, do the OS-specific stuff
     load_env(dir_name)
@@ -33,8 +33,9 @@ def build(src,dest,svn_up=None,**build_kwargs):
     tools['i3_metaproject']['icerec']['V05-00-00'](dir_name,**kwargs)
 
     # trunks
+    tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
     #tools['i3_metaproject']['offline-software']['trunk'](dir_name,**kwargs)
     #tools['i3_metaproject']['simulation']['trunk'](dir_name,**kwargs)
     #tools['i3_metaproject']['icerec']['trunk'](dir_name,**kwargs)
-    tools['i3_metaproject']['combo']['trunk'](dir_name,**kwargs)
+    #tools['i3_metaproject']['combo']['trunk'](dir_name,**kwargs)
 
