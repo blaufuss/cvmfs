@@ -27,7 +27,7 @@ def install(dir_name,version=None):
             
             # only install the required components
             if subprocess.call([cfg_path,'-prefix',dir_name,
-                                '-opensource','-no-accessibility','-no-sql-db2',
+                                '-opensource','-opengl','-no-accessibility','-no-sql-db2',
                                 '-no-sql-ibase','-no-sql-mysql','-no-sql-oci','-no-sql-odbc',
                                 '-no-sql-psql','-no-sql-sqlite','-no-sql-sqlite2',
                                 '-no-sql-sqlite_symbian','-no-sql-tds',

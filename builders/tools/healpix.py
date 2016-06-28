@@ -119,10 +119,12 @@ Cflags: -I${{prefix}}/include -fPIC
             lib_dir = os.path.join(healpix_dir,'auto','lib')
             link_cmd = [compiler, '-shared', '-o',
                         os.path.join(lib_dir, 'libhealpix_cxx.so'),
-                        '-L'+os.path.join(i3ports_dir,'lib'),'-lcfitsio',
-                        '-Wl,--whole-archive']
+                        '-L'+os.path.join(i3ports_dir,'lib'),
+                        '-Wl,--no-as-needed', '-lcfitsio',
+                        '-Wl,--as-needed', '-Wl,--whole-archive']
             link_cmd += glob.glob(os.path.join(lib_dir, '*.a'))
             link_cmd += ['-Wl,--no-whole-archive']
+            print(' '.join(link_cmd))
             if subprocess.call(link_cmd, cwd=healpix_dir):
                 raise Exception('healpix CXX failed to link')
             for root,dirs,files in os.walk(os.path.join(healpix_dir,'auto')):
@@ -162,7 +164,6 @@ Cflags: -I${{prefix}}/include/healpix_cxx -fPIC
             pkgconfig_file = open(os.path.join(dir_name,'lib','pkgconfig','healpix_cxx.pc'), "w")
             pkgconfig_file.write(pkg_config)
             pkgconfig_file.close()
-
 
         finally:
             shutil.rmtree(tmp_dir)

@@ -37,6 +37,14 @@ def install(dir_name):
                 raise Exception('cannot make DarwinPorts')
             if subprocess.call(['make','install'],cwd=port_source):
                 raise Exception('cannot make install DarwinPorts')
+            # fix config PATH
+            config_path = os.path.join(i3ports,'etc/ports/ports.conf')
+            data = open(config_path).read()
+            with open(config_path,'w') as f:
+                for line in data.split('\n'):
+                    f.write(line+'\n')
+                    if line.startswith('prefix'):
+                        f.write('binpath    %s/bin:%s/bin:%s/sbin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin\n'%(dir_name,i3ports,i3ports))
         finally:
             shutil.rmtree(tmp_dir)
 

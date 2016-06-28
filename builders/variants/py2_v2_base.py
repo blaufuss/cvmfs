@@ -31,11 +31,11 @@ def ports_packages(dir_name):
 def python_packages(dir_name):
     packages = ['setuptools==20.4','numpy==1.9.2','scipy==0.15.1','readline==6.2.4.1',
                 'ipython==3.1.0','pyfits==3.3','numexpr==2.4.3',
-                'Cython==0.22','PyMySQL==0.6.6','cffi==1.1.0',
+                'Cython==0.22','PyMySQL==0.6.6','cffi==1.5.0',
                 'matplotlib==1.4.3','Sphinx==1.3.1','healpy==1.8.6',
                 'spectrum==0.6.0','urwid==1.3.0',
                 'urllib3==1.10.4','requests==2.7.0',
-                'jsonschema==2.5.1',
+                'jsonschema==2.5.1','pyasn1==0.1.8',
                ]
 
     if os.environ['OS_ARCH'] == 'RHEL_5_x86_64':
@@ -43,7 +43,7 @@ def python_packages(dir_name):
     else:
         packages += ['pyOpenSSL==0.15.1']
 
-    packages += ['pyasn1==0.1.7','coverage==3.7.1','flexmock==0.9.7',
+    packages += ['coverage==3.7.1','flexmock==0.9.7',
                  'pyzmq==14.6.0','tornado==4.2']
 
     for pkg in packages:
