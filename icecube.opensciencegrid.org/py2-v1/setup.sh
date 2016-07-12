@@ -95,10 +95,12 @@ VARS="SROOTBASE SROOT I3_PORTS I3_SITE_CMAKE_DIR I3_DATA PATH MANPATH PKG_CONFIG
 GLOBUS_LOCATION=${SROOT}
 # if X509_USER_PROXY is just a filename, qualify it
 if [ ! -z "$X509_USER_PROXY" ]; then
-	if [ `basename "$X509_USER_PROXY"` -eq "$X509_USER_PROXY" ]; then
+	base_proxy=`basename "${X509_USER_PROXY}"`
+	if [ "$base_proxy" = "$X509_USER_PROXY" ]; then
 		export X509_USER_PROXY=$PWD/$X509_USER_PROXY
 		VARS="${VARS} X509_USER_PROXY"
 	fi
+	unset base_proxy
 fi
 
 
@@ -109,28 +111,39 @@ fi
 #    VARS="${VARS} OPENCL_VENDOR_PATH"
 #    LD_LIBRARY_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/lib/$OS_ARCH:${LD_LIBRARY_PATH}
 #fi
-libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64
+libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64:/usr/lib/x86_64-linux-gnu
 IFS=:
 for p in ${libdirlist}
 do
   if [ -e ${p}/libOpenCL.so.1 ]; then
     OpenCL=${p}/libOpenCL.so.1
+  elif [ -e ${p}/libOpenCL.so ]; then
+    OpenCL=${p}/libOpenCL.so
   fi
   if [ -e ${p}/libgfortran.so.3 ]; then
     GFORTRAN=${p}/libgfortran.so.3
   fi
 done
 unset IFS
+CPU_ICD=1
 if [ -z ${OPENCL_VENDOR_PATH} ]; then
     if [ -d /etc/OpenCL/vendors ]; then
         OPENCL_VENDOR_PATH=/etc/OpenCL/vendors
+        if ( [ ! -e /etc/OpenCL/vendors/amdocl64.icd ] && [ ! -e /etc/OpenCL/vendors/intel64.icd ] ); then
+            CPU_ICD=0
+        fi
     else
-        OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/etc/OpenCL/vendors
+        OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_${OS_ARCH}/etc/OpenCL/vendors
     fi
     VARS="${VARS} OPENCL_VENDOR_PATH"
 fi
-if [ -z ${OpenCL} ]; then
+if ( [ -z ${OpenCL} ] || [ "$CPU_ICD" = "0" ] ); then
     LD_LIBRARY_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/lib/$OS_ARCH:${LD_LIBRARY_PATH}
+    if [ "${OPENCL_VENDOR_PATH}" = "/etc/OpenCL/vendors" ]; then
+        OPENCL_VENDOR_PATH=`mktemp -d 2>/dev/null || mktemp -d -t 'vendortmp'`
+        cp -r /etc/OpenCL/vendors/* ${OPENCL_VENDOR_PATH}
+        cp -r ${SROOTBASE}/../distrib/OpenCL_${OS_ARCH}/etc/OpenCL/vendors/* ${OPENCL_VENDOR_PATH}
+    fi
 fi
 
 if [ -z ${GFORTRAN} ]; then
@@ -140,7 +153,7 @@ fi
 for name in ${VARS}
 do
   eval VALUE=\$$name
-  case ${SHELL##*/} in 
+  case "${SHELL}" in 
 	tcsh)
 		echo 'setenv '$name' '\"$VALUE\"' ;' ;;
 	csh)
