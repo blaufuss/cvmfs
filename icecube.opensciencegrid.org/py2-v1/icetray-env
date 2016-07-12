@@ -1,0 +1,9 @@
+#!/bin/bash
+DIR=$(echo "${0%/*}")
+SROOTBASE=$(cd "$DIR" && echo "$(pwd -L)")
+METAPROJECT=$1
+shift
+
+eval `$SROOTBASE/setup.sh`
+$SROOT/metaprojects/$METAPROJECT/env-shell.sh $@
+
