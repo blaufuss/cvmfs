@@ -38,7 +38,9 @@ SROOTBASE=$(cd "$DIR" && echo "$(pwd -L)")
 
 # Site-specific setup
 if [ -n "$OSG_GRID" ]; then
-	source $OSG_GRID/setup.sh
+    if [ -e $OSG_GRID/setup.sh ]; then
+	    source $OSG_GRID/setup.sh
+	fi
 fi
 # IceTray setup
 eval `$SROOTBASE/setup.sh`
