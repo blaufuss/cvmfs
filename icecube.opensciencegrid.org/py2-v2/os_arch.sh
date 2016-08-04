@@ -30,7 +30,7 @@ case $DISTRIB in
 		DISTRIB="Ubuntu"
 		if [ "$VERSION" = "testing" ]; then
 		    VERSION="16.04"
-		if echo $VERSION | grep -q '8\.\?'; then
+		elif echo $VERSION | grep -q '8\.\?'; then
 			VERSION="14.04"
 		elif echo $VERSION | grep -q '7\.\?'; then
 			VERSION="11.04"
