@@ -38,7 +38,7 @@ def install(dir_name,meta=None,version=None,svn_up=True):
                 raise Exception('source dir is empty')
             if (not is_release(version)) and os.path.exists(build_dir):
                 shutil.rmtree(build_dir)
-            os.makedirs(build_dir):
+            os.makedirs(build_dir)
             if subprocess.call(['cmake', '-DCMAKE_BUILD_TYPE=Release',
                                 '-DCOPY_PYTHON_DIR=True', src_dir],
                                 cwd=build_dir):

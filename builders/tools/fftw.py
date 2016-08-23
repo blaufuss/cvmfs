@@ -4,7 +4,6 @@ import os
 import subprocess
 import tempfile
 import shutil
-import copy
 
 from build_util import wget, unpack, version_dict
 
@@ -18,8 +17,11 @@ def install(dir_name,version=None):
             url = os.path.join('http://www.fftw.org',name)
             wget(url,path)
             fftw_dir = os.path.join(tmp_dir,'fftw-'+version)
-            mod_env = copy.deepcopy(os.environ)
-            mod_env['CC'] = 'cc -mtune=generic'
+            mod_env = dict(os.environ)
+            if 'CC' in mod_env:
+                mod_env['CC'] = mod_env['CC']+' -mtune=generic'
+            else:
+                mod_env['CC'] = 'cc -mtune=generic'
             for options in ('--enable-float','--enable-long-double',None):
                 if os.path.exists(fftw_dir):
                     shutil.rmtree(fftw_dir)

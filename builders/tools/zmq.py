@@ -5,6 +5,8 @@ import subprocess
 import tempfile
 import shutil
 
+from distutils.version import LooseVersion
+
 from build_util import wget, unpack, version_dict
 
 def install(dir_name,version=None):
@@ -14,7 +16,10 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('http://download.zeromq.org',name)
+            if LooseVersion(version) >= LooseVersion('4.1.0'):
+                url = os.path.join('https://github.com/zeromq/zeromq4-1/releases/download/v'+str(version),name)
+            else:
+                url = os.path.join('http://download.zeromq.org',name)
             wget(url,path)
             unpack(path,tmp_dir)
             zmq_dir = os.path.join(tmp_dir,'zeromq-'+version)
@@ -25,7 +30,7 @@ def install(dir_name,version=None):
                 raise Exception('zmq failed to make')
             if subprocess.call(['make','install'],cwd=zmq_dir):
                 raise Exception('zmq failed to install')
-            
+
             # the c++ bindings
             url = 'https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp'
             path = os.path.join(dir_name,'include','zmq.hpp')

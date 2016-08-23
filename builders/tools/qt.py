@@ -34,7 +34,7 @@ def install(dir_name,version=None):
                                 '-no-xmlpatterns','-no-multimedia','-no-phonon','-no-phonon-backend',
                                 '-no-webkit','-no-javascript-jit','-no-script','-no-scripttools',
                                 '-no-declarative','-no-nis','-nomake','examples','-nomake','demos',
-                                '-nomake','docs','-nomake','translations','-fast','-silent']
+                                '-nomake','docs','-nomake','translations','-fast'] #,'-silent']
                                ,cwd=qt_dir):
                 raise Exception('qt failed to configure')
             if subprocess.call(['make'],cwd=qt_dir):
