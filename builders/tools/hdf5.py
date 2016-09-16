@@ -18,6 +18,8 @@ def install(dir_name,version=None):
             wget(url,path)
             unpack(path,tmp_dir,flags=['-xj'])
             hdf5_dir = os.path.join(tmp_dir,'hdf5-'+version)
+            if 'CC' in os.environ:
+                os.environ['HDF5_CC'] = os.environ['CC']
             if subprocess.call([os.path.join(hdf5_dir,'configure'),
                                 '--prefix',dir_name,'--disable-debug',
                                 '--enable-cxx','--enable-production',
