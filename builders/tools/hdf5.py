@@ -14,7 +14,7 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('http://www.hdfgroup.org/ftp/HDF5/releases/hdf5-'+version,'src',name)
+            url = os.path.join("https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-" + version, 'src', name)
             wget(url,path)
             unpack(path,tmp_dir,flags=['-xj'])
             hdf5_dir = os.path.join(tmp_dir,'hdf5-'+version)
