@@ -27,6 +27,10 @@ def install(dir_name,version=None,for_clang=False):
             wget(url,path)
             unpack(path,tmp_dir)
             boost_dir = os.path.join(tmp_dir,'boost_'+version.replace('.','_'))
+            if version == "1.61.0":
+                wget("https://github.com/scopeInfinity/iostreams/commit/61a91325d936b0a9e6baaed6c974d0808e166822.patch",
+                      os.path.join(boost_dir,"61a91325d936b0a9e6baaed6c974d0808e166822.patch"))
+                subprocess.call(["patch", "-p2", "<", "61a91325d936b0a9e6baaed6c974d0808e166822.patch"], cwd=boost_dir)
             if for_clang:
                 if subprocess.call([os.path.join(boost_dir,'bootstrap.sh'),
                                     '--prefix='+dir_name,'--with-toolset=clang'],cwd=boost_dir):
