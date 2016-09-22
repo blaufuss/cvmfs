@@ -31,7 +31,7 @@ def install(dir_name,version=None):
             # Assumes no python2 version is installed
             v = LooseVersion(version)
             if v.version[0] == 3:
-                version_short = v.version[:2]
+                version_short = ".".join(map(str, v.version[:2]))
                 os.symlink(os.path.join(dir_name,'bin','python3'),
                            os.path.join(dir_name,'bin','python'))
                 os.symlink(os.path.join(dir_name, 'bin', 'python3-config'),
