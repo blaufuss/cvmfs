@@ -84,6 +84,12 @@ def build(src,dest,**build_kwargs):
     dir_name = os.path.join(dest,'py2-v2')
     copy_src(os.path.join(src,'py2-v2'),dir_name)
 
+    # Cleaning out the PYTHONPATH in case
+    # more than one variant gets build
+    # otherwise pip will pick up wrong
+    # python
+    del os.environ["PYTHONPATH"]
+    
     # now, do the OS-specific stuff
     load_env(dir_name)
     if 'SROOT' not in os.environ:
