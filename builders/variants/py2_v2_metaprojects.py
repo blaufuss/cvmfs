@@ -38,6 +38,7 @@ def build(src,dest,svn_up=None,**build_kwargs):
     # V05-00-04 is broken
     tools['i3_metaproject']['simulation']['V05-00-05'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V05-00-06'](dir_name,**kwargs)
+    tools['i3_metaproject']['simulation']['V05-00-07'](dir_name,**kwargs)
 
     tools['i3_metaproject']['icerec']['V05-00-00'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-00-01'](dir_name,**kwargs)
