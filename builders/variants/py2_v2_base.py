@@ -131,6 +131,7 @@ def build(src,dest,**build_kwargs):
     tools['globus']['5.2.5'](dir_name)
     tools['gsoap']['2.8.22'](dir_name)
     tools['voms']['2.0.12-2'](dir_name)
+    tools['uberftp']['master'](dir_name)
 
     # build physics software
     tools['gsl']['1.16'](dir_name)
