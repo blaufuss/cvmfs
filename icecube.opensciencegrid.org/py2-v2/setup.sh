@@ -23,6 +23,8 @@ PYTHONPATH=$SROOT/lib/python2.7/site-packages:$I3_PORTS/lib/python2.7/site-packa
 PERL5LIB=$SROOT/lib/perl:$SROOT/lib/perl5:$SROOT/lib/perl5/site_perl:$PERL5LIB
 MANPATH=$SROOT/man:$SROOT/share/man:$MANPATH
 
+GCC_VERSION=`gcc -v 2>&1|tail -1|awk '{print $3}'`
+
 # ROOT specific bits
 if [ -d $I3_PORTS/root-v5.34.18 ]; then
 	: ${ROOTVER="5.34.18"}
