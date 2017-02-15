@@ -8,7 +8,7 @@ elif [ -e /etc/os-release ]; then
     VERSION=`cat /etc/os-release|grep '^VERSION='|cut -d '=' -f 2|cut -d ' ' -f 1|sed s/\"//g`
 elif [ -e /etc/redhat-release ]; then
     DISTRIB="centos"
-    VERSION=`cat /etc/redhat-release|sed s/\ /\\n/g|grep '\.'`
+    VERSION=`cat /etc/redhat-release|sed s/\ /\\\\n/g|grep '\.'`
 else
     DISTRIB=`uname -s|tr '[:upper:]' '[:lower:]'`
     VERSION=`uname -r`
