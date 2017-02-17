@@ -21,7 +21,7 @@ def install(dir_name,version=None):
             unzip(path,tmp_dir)
             apsw_dir = os.path.join(tmp_dir,'apsw-'+str(version))
             env = dict(os.environ)
-            env['CFLAGS'] = '-I$SROOT/include/python2.7 -L$SROOT/lib'
+            env['CFLAGS'] = os.expandvars('-I$SROOT/include/python2.7 -L$SROOT/lib')
 
             if subprocess.call(['python','setup.py','fetch','--all',
                                 '--version',sqlite_version,
