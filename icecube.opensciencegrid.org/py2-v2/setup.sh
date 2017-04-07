@@ -98,9 +98,10 @@ libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64
 IFS=:
 for p in ${libdirlist}
 do
-  if [ -e ${p}/libOpenCL.so.1 ]; then
-    OpenCL=${p}/libOpenCL.so.1
-  fi
+# don't even look at the system for OpenCL. use CVMFS
+#  if [ -e ${p}/libOpenCL.so.1 ]; then
+#    OpenCL=${p}/libOpenCL.so.1
+#  fi
   if [ -e ${p}/libgfortran.so.3 ]; then
     GFORTRAN=${p}/libgfortran.so.3
   fi
