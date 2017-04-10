@@ -33,6 +33,11 @@ def build_instance(base_env, url, src, base_dir_name):
         raise Exception('$ICEPRODROOT not defined')
     dir_name = os.environ['ICEPRODROOT']
 
+    tag = os.path.basename(base_dir_name)
+    if tag != 'master' and os.path.exists(dir_name):
+        print(tag+' already exists')
+        return
+
     # fill OS-specific directory with dirs
     for d in ('bin','etc','include','lib','libexec','man',
               'share','tools','lib/python2.7/site-packages'):
@@ -88,10 +93,7 @@ def build(src,dest,**build_kwargs):
     for tag in sorted(releases, key=LooseVersion):
         url = releases[tag]
         base_dir_name = os.path.join(os.path.join(dest,'iceprod'),tag)
-        if os.path.exists(base_dir_name):
-            print(tag+' already exists')
-        else:
-            build_instance(base_env, url, src, base_dir_name)
+        build_instance(base_env, url, src, base_dir_name)
 
     # add symlink to latest version
     sym_name = os.path.join(os.path.join(dest,'iceprod'), 'latest')

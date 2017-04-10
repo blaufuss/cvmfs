@@ -29,7 +29,7 @@ def install(dir_name,meta=None,version=None,svn_up=True):
                 svn_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/%s'%(meta,version)
             src_dir = os.path.join(os.environ['SROOTBASE'],'metaprojects',meta,version)
             if svn_up:
-                if not is_release(version):
+                if (not is_release(version)) and os.path.exists(src_dir):
                     shutil.rmtree(src_dir)
                 if not os.path.exists(src_dir):
                     if subprocess.call(['svn','co',svn_url,src_dir]+svn_auth):

@@ -23,6 +23,8 @@ PYTHONPATH=$SROOT/lib/python2.7/site-packages:$I3_PORTS/lib/python2.7/site-packa
 PERL5LIB=$SROOT/lib/perl:$SROOT/lib/perl5:$SROOT/lib/perl5/site_perl:$PERL5LIB
 MANPATH=$SROOT/man:$SROOT/share/man:$MANPATH
 
+GCC_VERSION=`gcc -v 2>&1|tail -1|awk '{print $3}'`
+
 # ROOT specific bits
 if [ -d $I3_PORTS/root-v5.34.18 ]; then
 	: ${ROOTVER="5.34.18"}
@@ -71,9 +73,10 @@ if ([ -z ${JAVA_HOME} ] || [ ! -f ${JAVA_HOME}/bin/java ]); then
 fi
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${JAVA_HOME}/lib:${JAVA_HOME}/jre/lib:${JAVA_HOME}/jre/lib/amd64:${JAVA_HOME}/jre/lib/amd64/server:${JAVA_HOME}/jre/lib/i386:${JAVA_HOME}/jre/lib/i386/server
 
-VARS="SROOTBASE SROOT I3_PORTS I3_DATA I3_TESTDATA PATH MANPATH PKG_CONFIG_PATH LD_LIBRARY_PATH PYTHONPATH ROOTSYS OS_ARCH GCC_VERSION JAVA_HOME GOTO_NUM_THREADS PERL5LIB GLOBUS_LOCATION"
+VARS="SROOTBASE SROOT I3_PORTS I3_DATA I3_TESTDATA PATH MANPATH PKG_CONFIG_PATH LD_LIBRARY_PATH PYTHONPATH ROOTSYS OS_ARCH GCC_VERSION JAVA_HOME GOTO_NUM_THREADS PERL5LIB GLOBUS_LOCATION X509_CERT_DIR"
 
 GLOBUS_LOCATION=${SROOT}
+X509_CERT_DIR=${SROOT}/share/certificates
 # if X509_USER_PROXY is just a filename, qualify it
 if [ ! -z "$X509_USER_PROXY" ]; then
 	RET=`basename "$X509_USER_PROXY"`
@@ -95,9 +98,10 @@ libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64
 IFS=:
 for p in ${libdirlist}
 do
-  if [ -e ${p}/libOpenCL.so.1 ]; then
-    OpenCL=${p}/libOpenCL.so.1
-  fi
+# don't even look at the system for OpenCL. use CVMFS
+#  if [ -e ${p}/libOpenCL.so.1 ]; then
+#    OpenCL=${p}/libOpenCL.so.1
+#  fi
   if [ -e ${p}/libgfortran.so.3 ]; then
     GFORTRAN=${p}/libgfortran.so.3
   fi

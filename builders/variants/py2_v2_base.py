@@ -36,6 +36,7 @@ def python_packages(dir_name):
                 'spectrum==0.6.0','urwid==1.3.0',
                 'urllib3==1.10.4','requests==2.7.0',
                 'jsonschema==2.5.1','pyasn1==0.1.8',
+                'pymongo==3.4.0'
                ]
 
     if os.environ['OS_ARCH'] == 'RHEL_5_x86_64':
@@ -84,6 +85,13 @@ def build(src,dest,**build_kwargs):
     dir_name = os.path.join(dest,'py2-v2')
     copy_src(os.path.join(src,'py2-v2'),dir_name)
 
+    if 'PYTHONPATH' in os.environ:
+        # Cleaning out the PYTHONPATH in case
+        # more than one variant gets build
+        # otherwise pip will pick up wrong
+        # python
+        del os.environ["PYTHONPATH"]
+    
     # now, do the OS-specific stuff
     load_env(dir_name)
     if 'SROOT' not in os.environ:
@@ -125,6 +133,7 @@ def build(src,dest,**build_kwargs):
     tools['globus']['5.2.5'](dir_name)
     tools['gsoap']['2.8.22'](dir_name)
     tools['voms']['2.0.12-2'](dir_name)
+    tools['uberftp']['master'](dir_name)
 
     # build physics software
     tools['gsl']['1.16'](dir_name)

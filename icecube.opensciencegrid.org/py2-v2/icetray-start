@@ -49,7 +49,7 @@ export SCRATCH_DIR=${_CONDOR_SCRATCH_DIR:-$PWD}
 cd $SCRATCH_DIR
 
 # Attempt to find a caching HTTP proxy
-function get_http_proxy()
+get_http_proxy()
 {
 	if [ ! -z "$_get_http_proxy" ]; then
 		return
@@ -93,7 +93,7 @@ function get_http_proxy()
 	export _get_http_proxy=1
 }
 
-function urlcopy_item()
+urlcopy_item()
 {
 	scheme=`echo $1 | cut -d: -f1`
 	source=$1
@@ -117,7 +117,7 @@ function urlcopy_item()
 	esac
 }
 
-function urlcopy()
+urlcopy()
 {
 	eval dest=\${$#}
 	while [ $# -gt 1 ]; do
