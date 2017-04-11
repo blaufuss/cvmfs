@@ -86,37 +86,40 @@ if [ ! -z "$X509_USER_PROXY" ]; then
 	fi
 fi
 
-
 # OpenCL
-#CLINFO=`${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/bin/$OS_ARCH/clinfo 2>/dev/null | wc | awk '{print $1}'`
-#if [ $CLINFO -lt 20 ]; then
-#    OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/etc/OpenCL/vendors
-#    VARS="${VARS} OPENCL_VENDOR_PATH"
-#    LD_LIBRARY_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/lib/$OS_ARCH:${LD_LIBRARY_PATH}
-#fi
-libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64
+libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64:/usr/lib/x86_64-linux-gnu
 IFS=:
 for p in ${libdirlist}
 do
-# don't even look at the system for OpenCL. use CVMFS
-#  if [ -e ${p}/libOpenCL.so.1 ]; then
-#    OpenCL=${p}/libOpenCL.so.1
-#  fi
+  if [ -e ${p}/libOpenCL.so.1 ]; then
+    OpenCL=${p}/libOpenCL.so.1
+  elif [ -e ${p}/libOpenCL.so ]; then
+    OpenCL=${p}/libOpenCL.so
+  fi
   if [ -e ${p}/libgfortran.so.3 ]; then
     GFORTRAN=${p}/libgfortran.so.3
   fi
 done
 unset IFS
+CPU_ICD=1
 if [ -z ${OPENCL_VENDOR_PATH} ]; then
     if [ -d /etc/OpenCL/vendors ]; then
         OPENCL_VENDOR_PATH=/etc/OpenCL/vendors
+        if ( [ ! -e /etc/OpenCL/vendors/amdocl64.icd ] && [ ! -e /etc/OpenCL/vendors/intel64.icd ] ); then
+            CPU_ICD=0
+        fi
     else
-        OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/etc/OpenCL/vendors
+        OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_${OS_ARCH}/etc/OpenCL/vendors
     fi
     VARS="${VARS} OPENCL_VENDOR_PATH"
 fi
-if [ -z ${OpenCL} ]; then
+if ( [ -z ${OpenCL} ] || [ "$CPU_ICD" = "0" ] ); then
     LD_LIBRARY_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/lib/$OS_ARCH:${LD_LIBRARY_PATH}
+    if [ "${OPENCL_VENDOR_PATH}" = "/etc/OpenCL/vendors" ]; then
+        OPENCL_VENDOR_PATH=`mktemp -d 2>/dev/null || mktemp -d -t 'vendortmp'`
+        cp -r /etc/OpenCL/vendors/* ${OPENCL_VENDOR_PATH}
+        cp -r ${SROOTBASE}/../distrib/OpenCL_${OS_ARCH}/etc/OpenCL/vendors/* ${OPENCL_VENDOR_PATH}
+    fi
 fi
 
 if [ -z ${GFORTRAN} ]; then
