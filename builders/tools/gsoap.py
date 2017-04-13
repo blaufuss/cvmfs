@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unzip, version_dict
+from build_util import wget, unzip, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','wsdl2h')):
@@ -24,7 +24,7 @@ def install(dir_name,version=None):
             if subprocess.call([os.path.join(gsoap_dir,'configure'),
                                 '--prefix',dir_name,'--disable-static'],cwd=gsoap_dir):
                 raise Exception('gsoap failed to configure')
-            if subprocess.call(['make'],cwd=gsoap_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=gsoap_dir):
                 raise Exception('gsoap failed to make')
             if subprocess.call(['make','install'],cwd=gsoap_dir):
                 raise Exception('gsoap failed to install')

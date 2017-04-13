@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 # if version >= key, year = value
 years = {'3080300':'2014',
@@ -37,7 +37,7 @@ def install(dir_name,version=None):
             if subprocess.call([os.path.join(sqlite_dir,'configure'),
                                 '--prefix='+dir_name],cwd=sqlite_dir,env=mod_env):
                 raise Exception('sqlite failed to configure')
-            if subprocess.call(['make'],cwd=sqlite_dir,env=mod_env):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=sqlite_dir,env=mod_env):
                 raise Exception('sqlite failed to make')
             if subprocess.call(['make','install'],cwd=sqlite_dir,env=mod_env):
                 raise Exception('sqlite failed to install')

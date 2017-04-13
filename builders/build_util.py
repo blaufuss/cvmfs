@@ -6,6 +6,12 @@ import shutil
 from functools import partial
 from collections import Iterable
 
+try:
+    import multiprocessing
+    cpu_cores = str(min(multiprocessing.cpu_count(),8))
+except ImportError:
+    cpu_cores = '1'
+
 def get_module(name, class_name='build'):
     """Import module"""
     x = __import__(name,globals(),locals(),[class_name])

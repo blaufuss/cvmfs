@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','h5ls')):
@@ -30,7 +30,7 @@ def install(dir_name,version=None):
                                 '--enable-strict-format-checks',
                                 '--with-zlib=/usr'],cwd=hdf5_dir):
                 raise Exception('hdf5 failed to configure')
-            if subprocess.call(['make'],cwd=hdf5_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=hdf5_dir):
                 raise Exception('hdf5 failed to make')
             if subprocess.call(['make','install'],cwd=hdf5_dir):
                 raise Exception('hdf5 failed to install')

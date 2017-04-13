@@ -7,7 +7,7 @@ import shutil
 
 from distutils.version import LooseVersion
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libzmq.so')):
@@ -26,7 +26,7 @@ def install(dir_name,version=None):
             if subprocess.call([os.path.join(zmq_dir,'configure'),
                                 '--prefix',dir_name,'--without-libsodium'],cwd=zmq_dir):
                 raise Exception('zmq failed to configure')
-            if subprocess.call(['make'],cwd=zmq_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=zmq_dir):
                 raise Exception('zmq failed to make')
             if subprocess.call(['make','install'],cwd=zmq_dir):
                 raise Exception('zmq failed to install')

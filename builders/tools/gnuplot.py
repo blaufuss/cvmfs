@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name, version=None, x11=False):
     if not os.path.exists(os.path.join(dir_name,'bin','gnuplot')):
@@ -30,7 +30,7 @@ def install(dir_name, version=None, x11=False):
                                 '--prefix',dir_name,]+options,
                                 cwd=gnuplot_dir):
                 raise Exception('gnuplot failed to configure')
-            if subprocess.call(['make'],cwd=gnuplot_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=gnuplot_dir):
                 raise Exception('gnuplot failed to make')
             # touch two files to convince make they are new again
             for f in (os.path.join(gnuplot_dir,'docs','gnuplot-eldoc.el'),

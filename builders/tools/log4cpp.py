@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','liblog4cpp.so')):
@@ -23,7 +23,7 @@ def install(dir_name,version=None):
             if subprocess.call([os.path.join(log4cpp_dir,'configure'),
                                 '--prefix',dir_name],cwd=log4cpp_dir):
                 raise Exception('log4cpp failed to configure')
-            if subprocess.call(['make'],cwd=log4cpp_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=log4cpp_dir):
                 raise Exception('log4cpp failed to make')
             if subprocess.call(['make','install'],cwd=log4cpp_dir):
                 raise Exception('log4cpp failed to install')

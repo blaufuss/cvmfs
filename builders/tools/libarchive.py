@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libarchive.so')):
@@ -23,7 +23,7 @@ def install(dir_name,version=None):
                                 '--disable-bsdcpio','--without-xml2',
                                 '--without-expat'],cwd=libarchive_dir):
                 raise Exception('libarchive failed to configure')
-            if subprocess.call(['make'],cwd=libarchive_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=libarchive_dir):
                 raise Exception('libarchive failed to make')
             if subprocess.call(['make','install'],cwd=libarchive_dir):
                 raise Exception('libarchive failed to install')

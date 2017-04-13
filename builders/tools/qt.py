@@ -5,13 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-try:
-    import multiprocessing
-    cpu_cores = multiprocessing.cpu_count()
-except ImportError:
-    cpu_cores = 1
-
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','qmake')):
@@ -49,7 +43,7 @@ def install(dir_name,version=None):
                         '-nomake','docs','-nomake','translations',
                 ])
             else:
-                cpu_cores = 1 # bug in dependencies
+                cpu_cores = '1' # bug in dependencies
                 options.extend([
                         '-confirm-license','-no-avx','-no-avx2','-no-avx512',
                         '-no-dbus','--no-harfbuzz','-no-ssl','-skip','wayland',
@@ -59,7 +53,7 @@ def install(dir_name,version=None):
             if subprocess.call([cfg_path,'-prefix',dir_name]+options
                                ,cwd=qt_dir):
                 raise Exception('qt failed to configure')
-            if subprocess.call(['make','-j',str(cpu_cores)],cwd=qt_dir):
+            if subprocess.call(['make','-j',cpu_cores],cwd=qt_dir):
                 raise Exception('qt failed to make')
             if subprocess.call(['make','install'],cwd=qt_dir):
                 raise Exception('qt failed to install')

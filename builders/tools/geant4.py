@@ -5,13 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-try:
-    import multiprocessing
-    cpu_cores = multiprocessing.cpu_count()
-except ImportError:
-    cpu_cores = 1
-
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None,data_dir=None):
     if not os.path.exists(os.path.join(dir_name,'bin','geant4-config')):
@@ -35,7 +29,7 @@ def install(dir_name,version=None,data_dir=None):
                                 '-DCMAKE_INSTALL_PREFIX='+dir_name]
                                 +options+[geant4_dir],cwd=build_dir):
                 raise Exception('geant4 failed to cmake')
-            if subprocess.call(['make','-j',str(cpu_cores)],cwd=build_dir):
+            if subprocess.call(['make','-j',cpu_cores],cwd=build_dir):
                 raise Exception('geant4 failed to make')
             if subprocess.call(['make','install'],cwd=build_dir):
                 raise Exception('geant4 failed to install')

@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def get_url(v):
     if v[0] == '5':
@@ -42,7 +42,7 @@ def install(dir_name,version=None):
                                     '--disable-gram5','--disable-myproxy',
                                     '--prefix',dir_name],cwd=globus_dir):
                     raise Exception('globus failed to configure')
-                if subprocess.call(['make'],cwd=globus_dir):
+                if subprocess.call(['make', '-j', cpu_cores],cwd=globus_dir):
                     raise Exception('globus failed to make')
             if subprocess.call(['make','install'],cwd=globus_dir):
                 raise Exception('globus failed to install')

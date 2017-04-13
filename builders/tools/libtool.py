@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','libtool')):
@@ -22,7 +22,7 @@ def install(dir_name,version=None):
                                 '--prefix',dir_name],
                                cwd=libtool_dir):
                 raise Exception('libtool failed to configure')
-            if subprocess.call(['make'],cwd=libtool_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=libtool_dir):
                 raise Exception('libtool failed to make')
             if subprocess.call(['make','install'],cwd=libtool_dir):
                 raise Exception('libtool failed to install')
