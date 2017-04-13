@@ -25,32 +25,12 @@ MANPATH=$SROOT/man:$SROOT/share/man:$MANPATH
 
 GCC_VERSION=`gcc -v 2>&1|tail -1|awk '{print $3}'`
 
-# ROOT specific bits
 ROOTSYS=$SROOT
 
 # GotoBLAS
 GOTO_NUM_THREADS=1
 
-# Java is the future. Enterprise. Continuous Improvement. TPS Reports. Profit.
-case $OS_ARCH in
-	RHEL_6_x86_64)
-		if [ -d /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.33.x86_64 ]; then
-			JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.33.x86_64
-		elif [ -d /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64 ]; then
-			JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64
-		else
-			JAVA_HOME=/usr/lib/java
-		fi ;;
-	RHEL_5_i686)
-		JAVA_HOME=/usr/java/jdk1.5.0_12   ;;
-	RHEL_5_x86_64)
-		JAVA_HOME=/usr/java/default       ;;
-	RHEL_4_i686)
-		JAVA_HOME=/usr/java/j2sdk1.4.2_14 ;;
-	RHEL_4_x86_64)
-		JAVA_HOME=/usr/java/j2sdk1.4.2    ;;
-esac
-
+# Java
 if ([ -z ${JAVA_HOME} ] || [ ! -f ${JAVA_HOME}/bin/java ]); then
     JAVA_HOME=${SROOTBASE}/../distrib/jdk1.6.0_24_$OS_ARCH
 fi
@@ -69,37 +49,40 @@ if [ ! -z "$X509_USER_PROXY" ]; then
 	fi
 fi
 
-
 # OpenCL
-#CLINFO=`${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/bin/$OS_ARCH/clinfo 2>/dev/null | wc | awk '{print $1}'`
-#if [ $CLINFO -lt 20 ]; then
-#    OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/etc/OpenCL/vendors
-#    VARS="${VARS} OPENCL_VENDOR_PATH"
-#    LD_LIBRARY_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/lib/$OS_ARCH:${LD_LIBRARY_PATH}
-#fi
-libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64
+libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64:/usr/lib/x86_64-linux-gnu
 IFS=:
 for p in ${libdirlist}
 do
-# don't even look at the system for OpenCL. use CVMFS
-#  if [ -e ${p}/libOpenCL.so.1 ]; then
-#    OpenCL=${p}/libOpenCL.so.1
-#  fi
+  if [ -e ${p}/libOpenCL.so.1 ]; then
+    OpenCL=${p}/libOpenCL.so.1
+  elif [ -e ${p}/libOpenCL.so ]; then
+    OpenCL=${p}/libOpenCL.so
+  fi
   if [ -e ${p}/libgfortran.so.3 ]; then
     GFORTRAN=${p}/libgfortran.so.3
   fi
 done
 unset IFS
+CPU_ICD=1
 if [ -z ${OPENCL_VENDOR_PATH} ]; then
     if [ -d /etc/OpenCL/vendors ]; then
         OPENCL_VENDOR_PATH=/etc/OpenCL/vendors
+        if ( [ ! -e /etc/OpenCL/vendors/amdocl64.icd ] && [ ! -e /etc/OpenCL/vendors/intel64.icd ] ); then
+            CPU_ICD=0
+        fi
     else
-        OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/etc/OpenCL/vendors
+        OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_${OS_ARCH}/etc/OpenCL/vendors
     fi
     VARS="${VARS} OPENCL_VENDOR_PATH"
 fi
-if [ -z ${OpenCL} ]; then
+if ( [ -z ${OpenCL} ] || [ "$CPU_ICD" = "0" ] ); then
     LD_LIBRARY_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/lib/$OS_ARCH:${LD_LIBRARY_PATH}
+    if [ "${OPENCL_VENDOR_PATH}" = "/etc/OpenCL/vendors" ]; then
+        OPENCL_VENDOR_PATH=`mktemp -d 2>/dev/null || mktemp -d -t 'vendortmp'`
+        cp -r /etc/OpenCL/vendors/* ${OPENCL_VENDOR_PATH}
+        cp -r ${SROOTBASE}/../distrib/OpenCL_${OS_ARCH}/etc/OpenCL/vendors/* ${OPENCL_VENDOR_PATH}
+    fi
 fi
 
 if [ -z ${GFORTRAN} ]; then
