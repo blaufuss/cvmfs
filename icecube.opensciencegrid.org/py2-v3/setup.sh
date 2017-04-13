@@ -11,31 +11,55 @@ SROOTBASE=$(cd "$DIR" && echo "$(pwd -L)")
 
 SROOT=$SROOTBASE/$OS_ARCH
 
-PATH=$SROOT/bin:$PATH
+I3_PORTS=$SROOT/i3ports
+PATH=$SROOT/bin:$I3_PORTS/bin:$PATH
 
 I3_DATA=$SROOTBASE/../data
 I3_TESTDATA=$SROOTBASE/../data/i3-test-data
 
 PKG_CONFIG_PATH=$SROOT/lib/pkgconfig:$PKG_CONFIG_PATH
-LD_LIBRARY_PATH=$SROOT/lib:$LD_LIBRARY_PATH
-PYTHONPATH=$SROOT/lib/python2.7/site-packages$PYTHONPATH
+LD_LIBRARY_PATH=$SROOT/lib:$I3_PORTS/lib:$LD_LIBRARY_PATH
+PYTHONPATH=$SROOT/lib/python2.7/site-packages:$I3_PORTS/lib/python2.7/site-packages:$PYTHONPATH
 PERL5LIB=$SROOT/lib/perl:$SROOT/lib/perl5:$SROOT/lib/perl5/site_perl:$PERL5LIB
 MANPATH=$SROOT/man:$SROOT/share/man:$MANPATH
-CC=$SROOT/bin/clang
-CXX=$SROOT/bin/clang++
-ROOTSYS=$SROOT
 
-# MPI, if installed
-if [ -d /usr/lib64/openmpi/bin ]; then
-	PATH=/usr/lib64/openmpi/bin:$PATH
-fi
+GCC_VERSION=`gcc -v 2>&1|tail -1|awk '{print $3}'`
+
+# ROOT specific bits
+ROOTSYS=$SROOT
 
 # GotoBLAS
 GOTO_NUM_THREADS=1
 
-VARS="SROOTBASE SROOT I3_DATA I3_TESTDATA PATH MANPATH PKG_CONFIG_PATH LD_LIBRARY_PATH PYTHONPATH ROOTSYS OS_ARCH GCC_VERSION GOTO_NUM_THREADS PERL5LIB GLOBUS_LOCATION CC CXX"
+# Java is the future. Enterprise. Continuous Improvement. TPS Reports. Profit.
+case $OS_ARCH in
+	RHEL_6_x86_64)
+		if [ -d /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.33.x86_64 ]; then
+			JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.33.x86_64
+		elif [ -d /usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64 ]; then
+			JAVA_HOME=/usr/lib/jvm/java-1.6.0-openjdk-1.6.0.0.x86_64
+		else
+			JAVA_HOME=/usr/lib/java
+		fi ;;
+	RHEL_5_i686)
+		JAVA_HOME=/usr/java/jdk1.5.0_12   ;;
+	RHEL_5_x86_64)
+		JAVA_HOME=/usr/java/default       ;;
+	RHEL_4_i686)
+		JAVA_HOME=/usr/java/j2sdk1.4.2_14 ;;
+	RHEL_4_x86_64)
+		JAVA_HOME=/usr/java/j2sdk1.4.2    ;;
+esac
+
+if ([ -z ${JAVA_HOME} ] || [ ! -f ${JAVA_HOME}/bin/java ]); then
+    JAVA_HOME=${SROOTBASE}/../distrib/jdk1.6.0_24_$OS_ARCH
+fi
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${JAVA_HOME}/lib:${JAVA_HOME}/jre/lib:${JAVA_HOME}/jre/lib/amd64:${JAVA_HOME}/jre/lib/amd64/server:${JAVA_HOME}/jre/lib/i386:${JAVA_HOME}/jre/lib/i386/server
+
+VARS="SROOTBASE SROOT I3_PORTS I3_DATA I3_TESTDATA PATH MANPATH PKG_CONFIG_PATH LD_LIBRARY_PATH PYTHONPATH ROOTSYS OS_ARCH GCC_VERSION JAVA_HOME GOTO_NUM_THREADS PERL5LIB GLOBUS_LOCATION X509_CERT_DIR"
 
 GLOBUS_LOCATION=${SROOT}
+X509_CERT_DIR=${SROOT}/share/certificates
 # if X509_USER_PROXY is just a filename, qualify it
 if [ ! -z "$X509_USER_PROXY" ]; then
 	RET=`basename "$X509_USER_PROXY"`
@@ -47,13 +71,20 @@ fi
 
 
 # OpenCL
+#CLINFO=`${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/bin/$OS_ARCH/clinfo 2>/dev/null | wc | awk '{print $1}'`
+#if [ $CLINFO -lt 20 ]; then
+#    OPENCL_VENDOR_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/etc/OpenCL/vendors
+#    VARS="${VARS} OPENCL_VENDOR_PATH"
+#    LD_LIBRARY_PATH=${SROOTBASE}/../distrib/OpenCL_$OS_ARCH/lib/$OS_ARCH:${LD_LIBRARY_PATH}
+#fi
 libdirlist=${LD_LIBRARY_PATH}:/usr/lib:/usr/lib64:/lib:/lib64
 IFS=:
 for p in ${libdirlist}
 do
-  if [ -e ${p}/libOpenCL.so.1 ]; then
-    OpenCL=${p}/libOpenCL.so.1
-  fi
+# don't even look at the system for OpenCL. use CVMFS
+#  if [ -e ${p}/libOpenCL.so.1 ]; then
+#    OpenCL=${p}/libOpenCL.so.1
+#  fi
   if [ -e ${p}/libgfortran.so.3 ]; then
     GFORTRAN=${p}/libgfortran.so.3
   fi

@@ -31,15 +31,19 @@ def install(dir_name,version=None):
             # Assumes no python2 version is installed
             v = LooseVersion(version)
             if v.version[0] == 3:
-                version_short = ".".join(map(str, v.version[:2]))
-                os.symlink(os.path.join(dir_name,'bin','python3'),
-                           os.path.join(dir_name,'bin','python'))
-                os.symlink(os.path.join(dir_name, 'bin', 'python3-config'),
-                           os.path.join(dir_name, 'bin', 'python-config'))
-                os.symlink(os.path.join(dir_name, 'lib', 'pkgconfig', 'python3.pc'),
-                           os.path.join(dir_name, 'lib', 'pkgconfig', 'python.pc'))
-                os.symlink(os.path.join(dir_name, 'include', 'python%sm' % version_short),
-                           os.path.join(dir_name, 'include', 'python%s' % version_short))
+                version_short = '.'.join(map(str, v.version[:2]))
+                if not os.path.exists(os.path.join(dir_name,'bin','python')):
+                    os.symlink(os.path.join(dir_name,'bin','python3'),
+                               os.path.join(dir_name,'bin','python'))
+                if not os.path.exists(os.path.join(dir_name,'bin','python-config')):
+                    os.symlink(os.path.join(dir_name, 'bin', 'python3-config'),
+                               os.path.join(dir_name, 'bin', 'python-config'))
+                if not os.path.exists(os.path.join(dir_name,'lib','pkgconfig','python.pc')):
+                    os.symlink(os.path.join(dir_name, 'lib', 'pkgconfig', 'python3.pc'),
+                               os.path.join(dir_name, 'lib', 'pkgconfig', 'python.pc'))
+                if not os.path.exists(os.path.join(dir_name,'include','python%s' % version_short)):
+                    os.symlink(os.path.join(dir_name, 'include', 'python%sm' % version_short),
+                               os.path.join(dir_name, 'include', 'python%s' % version_short))
             # check for modules
             for m in ('sqlite3','zlib','bz2','_ssl','_curses','readline'):
                 if subprocess.call([os.path.join(dir_name,'bin','python'),

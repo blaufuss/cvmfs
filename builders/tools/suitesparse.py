@@ -11,7 +11,8 @@ from distutils.version import LooseVersion
 from build_util import wget, unpack, version_dict
 
 def install(dir_name,version=None):
-    if not os.path.exists(os.path.join(dir_name,'lib','libsuitesparseconfig.a')):
+    if (not (os.path.exists(os.path.join(dir_name,'lib','libsuitesparseconfig.a'))
+        or os.path.exists(os.path.join(dir_name,'lib','libsuitesparseconfig.so')))):
         print('installing suitesparse version',version)
         name = 'SuiteSparse-'+version+'.tar.gz'
         try:
@@ -34,10 +35,16 @@ def install(dir_name,version=None):
                         line = 'INSTALL_LIB = '+os.path.join(dir_name,'lib')
                     elif line.strip().startswith('INSTALL_INCLUDE '):
                         line = 'INSTALL_INCLUDE = '+os.path.join(dir_name,'include')
+                    elif line.strip().startswith('INSTALL_DOC '):
+                        docs_dir = os.path.join(dir_name,'share','suitesparse')
+                        line = 'INSTALL_DOC = '+docs_dir
+                        if not os.path.exists(docs_dir):
+                            os.mkdir(docs_dir)
                     elif 'BLAS =' in line or 'LAPACK =' in line or 'CFOPENMP ' in line:
                         line = '#'+line
                     f.write(line+'\n')
-            if subprocess.call(['make','library'],cwd=suitesparse_dir):
+            if subprocess.call(['make','library','LDFLAGS=-L'+os.path.join(suitesparse_dir,'lib')],
+                                cwd=suitesparse_dir):
                 raise Exception('suitesparse failed to make')
             if subprocess.call(['make','install'],cwd=suitesparse_dir):
                 raise Exception('suitesparse failed to install')

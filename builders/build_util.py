@@ -4,6 +4,7 @@ import os
 import subprocess
 import shutil
 from functools import partial
+from collections import Iterable
 
 def get_module(name, class_name='build'):
     """Import module"""
@@ -148,9 +149,15 @@ def get_sroot(dir_name):
 class version_dict(dict):
     def __init__(self, handler, *args, **kwargs):
         self.handler = handler
+        self.bad_versions = kwargs.pop('bad_versions',[])
+        if isinstance(self.bad_versions,Iterable):
+            self.bad_versions = set(self.bad_versions)
         dict.__init__(self, *args, **kwargs)
 
     def __getitem__(self, key):
+        if ((isinstance(self.bad_versions,Iterable) and key in self.bad_versions)
+            or (callable(self.bad_versions) and self.bad_versions(key))):
+            raise Exception('bad version')
         try:
             return dict.__getitem__(self,key)
         except Exception:

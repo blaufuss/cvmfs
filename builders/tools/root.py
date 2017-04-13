@@ -7,8 +7,9 @@ import shutil
 
 from build_util import wget, unpack, version_dict
 
-def install(dir_name,version=None):
-    if not os.path.exists(os.path.join(dir_name,'bin','root')):
+def install(dir_name,version=None,x11=False):
+    if not (os.path.exists(os.path.join(dir_name,'bin','root'))
+         or os.path.exists(os.path.join(dir_name,'bin','root.exe'))):
         print('installing root version',version)
         name = 'root_v'+str(version)+'.source.tar.gz'
         try:
@@ -20,15 +21,20 @@ def install(dir_name,version=None):
             root_dir = os.path.join(tmp_dir,'root-'+version)
             build_dir = os.path.join(tmp_dir,'build')
             os.mkdir(build_dir)
-            if subprocess.call(['cmake',
-                                '-Dgminimal=ON',
-                                '-Dminuit2=ON',
-                                '-Dgsl_shared=ON',
-                                '-Dpythia6=ON',
-                                '-Dpython=ON',
-                                '-Dmathmore=ON',
-                                '-Dx11=OFF',
-                                '-Dasimage=ON',
+            options = [
+                    '-Dgminimal=ON',
+                    '-Dminuit2=ON',
+                    '-Dgsl_shared=ON',
+                    '-Dpythia6=ON',
+                    '-Dpython=ON',
+                    '-Dmathmore=ON',
+                    '-Dasimage=ON',
+            ]
+            if x11:
+                options.append('-Dx11=ON')
+            else:
+                options.append('-Dx11=OFF')
+            if subprocess.call(['cmake']+options+[
                                 '-DCMAKE_INSTALL_PREFIX='+dir_name,
                                 root_dir],cwd=build_dir):
                 raise Exception('root failed to cmake')
@@ -40,4 +46,7 @@ def install(dir_name,version=None):
             shutil.rmtree(tmp_dir)
 
 def versions():
-    return version_dict(install)
+    # need 6.10 or better
+    def bad(v):
+        return any(v.startswith(k) for k in ('5.','6.00','6.02','6.04','6.06','6.08'))
+    return version_dict(install, bad_versions=bad)

@@ -7,10 +7,13 @@ import shutil
 
 from build_util import wget, unpack, version_dict
 
-def install(dir_name,version=None,old_boost=True):
+def install(dir_name,version=None,old_boost=False):
     if not os.path.exists(os.path.join(dir_name,'lib','libboost_numpy.so')):
         print('installing boostnumpy version',version)
-        name = 'V'+str(version)+'.tar.gz'
+        if version=='master':
+            name = 'master.tar.gz'
+        else:
+            name = 'V'+str(version)+'.tar.gz'
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)

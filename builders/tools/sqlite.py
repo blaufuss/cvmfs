@@ -11,6 +11,7 @@ from build_util import wget, unpack, version_dict
 years = {'3080300':'2014',
          '3080800':'2015',
          '3100000':'2016',
+         '3160000':'2017',
         }
 
 def install(dir_name,version=None):

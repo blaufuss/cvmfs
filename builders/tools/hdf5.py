@@ -15,7 +15,11 @@ def install(dir_name,version=None):
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
             url = os.path.join("https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-" + version, 'src', name)
-            wget(url,path)
+            try:
+                wget(url,path)
+            except:
+                url = os.path.join("https://support.hdfgroup.org/ftp/HDF5/current18", 'src', name)
+                wget(url,path)
             unpack(path,tmp_dir,flags=['-xj'])
             hdf5_dir = os.path.join(tmp_dir,'hdf5-'+version)
             if 'CC' in os.environ:
