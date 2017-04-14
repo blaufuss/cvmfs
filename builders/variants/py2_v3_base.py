@@ -21,6 +21,7 @@ def python_packages(dir_name):
                 'urllib3==1.20','requests==2.13.0',
                 'jsonschema==2.6.0','virtualenv==15.1.0',
                 'pyOpenSSL==16.2.0','jupyter==1.0.0',
+                'pymongo==3.4.0',
                ]
 
     for pkg in packages:
@@ -112,6 +113,7 @@ def build(src,dest,**build_kwargs):
     tools['erfa']['1.3.0'](dir_name)
     tools['pal']['master'](dir_name)
     tools['healpix']['3.31'](dir_name,i3ports=False)
+    tools['nlopt']['2.4.2'](dir_name)
 
     tools['pythia']['6.4.28'](dir_name)
     tools['root']['6.09.02'](dir_name)
