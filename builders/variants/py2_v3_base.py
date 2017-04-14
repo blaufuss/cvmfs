@@ -20,13 +20,8 @@ def python_packages(dir_name):
                 'spectrum==0.6.2','urwid==1.3.1',
                 'urllib3==1.20','requests==2.13.0',
                 'jsonschema==2.6.0','virtualenv==15.1.0',
-                'jupyter==1.0.0',
+                'pyOpenSSL==16.2.0','jupyter==1.0.0',
                ]
-
-    if os.environ['OS_ARCH'] == 'RHEL_5_x86_64':
-        packages += ['pyOpenSSL==0.12']
-    else:
-        packages += ['pyOpenSSL==16.2.0']
 
     for pkg in packages:
         tools['pip']['install'](pkg)
