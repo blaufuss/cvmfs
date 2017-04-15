@@ -3,6 +3,26 @@
 # from bash or tcsh, call this script as:
 # eval `/cvmfs/icecube.opensciencegrid.org/setup.sh`
 
+case ${SHELL##*/} in
+  *csh)
+    cat <<END
+if ( $?prompt ) then
+  echo "WARNING: The \"py2-v3_early_access\" environment is deprecated.";
+endif
+END
+;;
+  *)
+    cat <<END
+case \$- in
+*i*)
+  echo "WARNING: The \"py2-v3_early_access\" environment is deprecated.";
+;;
+esac;
+END
+;;
+esac
+
+
 # This is here since readlink -f doesn't work on Darwin
 DIR=$(echo "${0%/*}")
 SROOTBASE=$(cd "$DIR" && echo "$(pwd -L)")
