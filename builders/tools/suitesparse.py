@@ -11,8 +11,8 @@ from distutils.version import LooseVersion
 from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
-    if (not (os.path.exists(os.path.join(dir_name,'lib','libsuitesparseconfig.a'))
-        or os.path.exists(os.path.join(dir_name,'lib','libsuitesparseconfig.so')))):
+    if (not (os.path.exists(os.path.join(dir_name,'lib','libspqr.a'))
+        or os.path.exists(os.path.join(dir_name,'lib','libspqr.so')))):
         print('installing suitesparse version',version)
         name = 'SuiteSparse-'+version+'.tar.gz'
         try:
@@ -46,7 +46,7 @@ def install(dir_name,version=None):
             ldflags = '-L'+os.path.join(suitesparse_dir,'lib')
             ldflags += ' -L'+os.path.join(dir_name,'lib')
             if subprocess.call(['make', '-j', cpu_cores, 'library',
-                                'LDFLAGS="%s"'%ldflags],
+                                'LDFLAGS='+ldflags],
                                 cwd=suitesparse_dir):
                 raise Exception('suitesparse failed to make')
             if subprocess.call(['make','install'],cwd=suitesparse_dir):
