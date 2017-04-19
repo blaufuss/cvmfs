@@ -114,6 +114,7 @@ def build(src,dest,**build_kwargs):
     tools['pal']['master'](dir_name)
     tools['healpix']['3.31'](dir_name,i3ports=False)
     tools['nlopt']['2.4.2'](dir_name)
+    tools['photospline']['2.0.0'](dir_name)
 
     tools['pythia']['6.4.28'](dir_name)
     tools['root']['6.09.02'](dir_name)
