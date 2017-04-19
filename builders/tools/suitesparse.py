@@ -22,11 +22,16 @@ def install(dir_name,version=None):
             wget(url,path)
             unpack(path,tmp_dir)
             suitesparse_dir = os.path.join(tmp_dir,'SuiteSparse')
+
+            ldflags = '-L'+os.path.join(suitesparse_dir,'lib')
+            ldflags += ' -L'+os.path.join(dir_name,'lib')
+
             config_name = os.path.join(suitesparse_dir,'SuiteSparse_config','SuiteSparse_config.mk')
             config = open(config_name).read()
             with open(config_name,'w') as f:
                 f.write('BLAS = -L'+os.path.join(dir_name,'lib')+' -lopenblas\n')
                 f.write('LAPACK = -L'+os.path.join(dir_name,'lib')+' -lopenblas\n')
+                f.write('LDFLAGS = '+ldflags+'\n')
                 f.write('CFOPENMP=\n')
                 for line in config.split('\n'):
                     if line.strip().startswith('INSTALL '):
@@ -43,16 +48,13 @@ def install(dir_name,version=None):
                     elif 'BLAS =' in line or 'LAPACK =' in line or 'CFOPENMP ' in line:
                         line = '#'+line
                     f.write(line+'\n')
-            ldflags = '-L'+os.path.join(suitesparse_dir,'lib')
-            ldflags += ' -L'+os.path.join(dir_name,'lib')
-            if subprocess.call(['make', '-j', cpu_cores, 'library',
-                                'LDFLAGS='+ldflags],
+            if subprocess.call(['make', 'library',],
                                 cwd=suitesparse_dir):
                 raise Exception('suitesparse failed to make')
             if subprocess.call(['make','install'],cwd=suitesparse_dir):
                 raise Exception('suitesparse failed to install')
         finally:
-            shutil.rmtree(tmp_dir)
+            pass#shutil.rmtree(tmp_dir)
 
 def versions():
     return version_dict(install)
