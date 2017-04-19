@@ -15,7 +15,7 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('ftp://heasarc.gsfc.nasa.gov/software/fitsio/c',name)
+            url = os.path.join('https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c',name)
             wget(url,path)
             unpack(path,tmp_dir)
             cfitsio_dir = os.path.join(tmp_dir,'cfitsio')
