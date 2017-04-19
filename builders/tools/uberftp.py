@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','uberftp')):
@@ -25,7 +25,7 @@ def install(dir_name,version=None):
                                 '--prefix='+dir_name],
                                 cwd=src_dir):
                 raise Exception('failed to configure')
-            if subprocess.call(['make'],cwd=src_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=src_dir):
                 raise Exception('failed to make')
             if subprocess.call(['make','install'],cwd=src_dir):
                 raise Exception('failed to install')

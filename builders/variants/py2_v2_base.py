@@ -143,7 +143,7 @@ def build(src,dest,**build_kwargs):
     tools['suitesparse']['4.4.4'](dir_name)
     tools['cfitsio']['3.370'](dir_name)
     tools['fftw']['3.3.4'](dir_name)
-    tools['cdk']['5.0'](dir_name)
+    tools['cdk']['5.0-20150928'](dir_name)
     tools['gnuplot']['5.0.0'](dir_name)
     tools['hdf5']['1.8.15'](dir_name)
     tools['erfa']['1.2.0'](dir_name)

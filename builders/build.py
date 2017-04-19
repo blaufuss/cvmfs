@@ -52,6 +52,7 @@ def main():
     options.src = absolute(options.src)
     
     if options.scratch:
+        options.scratch = absolute(options.scratch)
         os.environ['TMPDIR'] = options.scratch
         os.environ['TEMP'] = options.scratch
         os.environ['TMP'] = options.scratch

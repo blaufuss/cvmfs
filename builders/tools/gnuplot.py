@@ -5,9 +5,9 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
-def install(dir_name,version=None):
+def install(dir_name, version=None, x11=False):
     if not os.path.exists(os.path.join(dir_name,'bin','gnuplot')):
         print('installing gnuplot version',version)
         name = 'gnuplot-'+str(version)+'.tar.gz'
@@ -18,12 +18,19 @@ def install(dir_name,version=None):
             wget(url,path)
             unpack(path,tmp_dir)
             gnuplot_dir = os.path.join(tmp_dir,'gnuplot-'+version)
+            options = [
+                    '--without-linux-vga',
+                    '--without-lisp-files',
+                    '--without-tutorial',
+                    '--with-bitmap-terminals',
+            ]
+            if not x11:
+                options.extend(['--without-x','--without-lua','--with-qt=no'])
             if subprocess.call([os.path.join(gnuplot_dir,'configure'),
-                                '--prefix',dir_name,'--without-linux-vga',
-                                '--without-lisp-files','--without-tutorial',
-                                '--with-bitmap-terminals'],cwd=gnuplot_dir):
+                                '--prefix',dir_name,]+options,
+                                cwd=gnuplot_dir):
                 raise Exception('gnuplot failed to configure')
-            if subprocess.call(['make'],cwd=gnuplot_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=gnuplot_dir):
                 raise Exception('gnuplot failed to make')
             # touch two files to convince make they are new again
             for f in (os.path.join(gnuplot_dir,'docs','gnuplot-eldoc.el'),

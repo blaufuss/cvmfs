@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libreadline.so')):
@@ -21,7 +21,7 @@ def install(dir_name,version=None):
             if subprocess.call([os.path.join(readline_dir,'configure'),
                                 '--prefix',dir_name],cwd=readline_dir):
                 raise Exception('readline failed to configure')
-            if subprocess.call(['make'],cwd=readline_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=readline_dir):
                 raise Exception('readline failed to make')
             if subprocess.call(['make','install'],cwd=readline_dir):
                 raise Exception('readline failed to install')

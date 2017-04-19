@@ -8,7 +8,8 @@ import shutil
 from build_util import wget, unpack, version_dict
 
 def install(dir_name,version=None):
-    if not os.path.exists(os.path.join(dir_name,'bin','tclsh')):
+    bin_path = os.path.join(dir_name,'bin','tclsh')
+    if not os.path.exists(bin_path):
         print('installing tcl/tk version',version)
         tcl_name = 'tcl'+version+'-src.tar.gz'
         tk_name = 'tk'+version+'-src.tar.gz'
@@ -36,8 +37,8 @@ def install(dir_name,version=None):
                                     dir_name],cwd=tk_dir):
                 if not subprocess.call(['make'],cwd=tk_dir):
                     subprocess.call(['make','install'],cwd=tk_dir)
-            os.symlink(os.path.expandvars('$SROOT/bin/tclsh'+'.'.join(version.split('.')[:2])),
-                       os.path.expandvars('$SROOT/bin/tclsh'))
+            os.symlink(bin_path+'.'.join(version.split('.')[:2]),
+                       bin_path)
         finally:
             shutil.rmtree(tmp_dir)
 

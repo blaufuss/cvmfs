@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libgsl.so')):
@@ -21,7 +21,7 @@ def install(dir_name,version=None):
             if subprocess.call([os.path.join(gsl_dir,'configure'),
                                 '--prefix',dir_name],cwd=gsl_dir):
                 raise Exception('gsl failed to configure')
-            if subprocess.call(['make'],cwd=gsl_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=gsl_dir):
                 raise Exception('gsl failed to make')
             if subprocess.call(['make','install'],cwd=gsl_dir):
                 raise Exception('gsl failed to install')

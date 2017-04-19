@@ -5,13 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
-
-try:
-    import multiprocessing
-    cpu_cores = multiprocessing.cpu_count()
-except ImportError:
-    cpu_cores = 1
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None,for_clang=False):
     if not os.path.exists(os.path.join(dir_name,'lib','libboost_python.so')):
@@ -35,13 +29,13 @@ def install(dir_name,version=None,for_clang=False):
                 if subprocess.call([os.path.join(boost_dir,'bootstrap.sh'),
                                     '--prefix='+dir_name,'--with-toolset=clang'],cwd=boost_dir):
                     raise Exception('boost failed to bootstrap')
-                if subprocess.call([os.path.join(boost_dir,'b2'),'install','-j'+str(cpu_cores),'toolset=clang','cxxflags="-std=c++14"'],cwd=boost_dir):
+                if subprocess.call([os.path.join(boost_dir,'b2'),'install','-j'+cpu_cores,'toolset=clang','cxxflags="-std=c++14"'],cwd=boost_dir):
                     raise Exception('boost failed to b2 install')
             else:
                 if subprocess.call([os.path.join(boost_dir,'bootstrap.sh'),
                                     '--prefix='+dir_name],cwd=boost_dir):
                     raise Exception('boost failed to bootstrap')
-                if subprocess.call([os.path.join(boost_dir,'b2'),'install','-j'+str(cpu_cores)],cwd=boost_dir):
+                if subprocess.call([os.path.join(boost_dir,'b2'),'install','-j'+cpu_cores],cwd=boost_dir):
                     raise Exception('boost failed to b2 install')
         finally:
             shutil.rmtree(tmp_dir)

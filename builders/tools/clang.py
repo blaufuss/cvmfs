@@ -62,24 +62,20 @@ Index: llvm/tools/clang/lib/Driver/Tools.cpp
 ===================================================================
 --- llvm/tools/clang/lib/Driver/Tools.cpp    (revision 248309)
 +++ llvm/tools/clang/lib/Driver/Tools.cpp    (working copy)
-@@ -3881,8 +3881,12 @@
+@@ -3881,8 +3881,10 @@
      if (!types::isCXX(InputType))
        Args.AddAllArgsTranslated(CmdArgs, options::OPT_std_default_EQ, "-std=",
                                  /*Joined=*/true);
--    else if (IsWindowsMSVC)
--      ImplyVCPPCXXVer = true;
-+    else{
-+      if (IsWindowsMSVC)
-+        ImplyVCPPCXXVer = true;
-+      else
-+        CmdArgs.push_back("-std=c++14");
-+    }
+     else if (IsWindowsMSVC)
+       ImplyVCPPCXXVer = true;
++    else
++      CmdArgs.push_back("-std=c++14");
 
      Args.AddLastArg(CmdArgs, options::OPT_ftrigraphs,
                      options::OPT_fno_trigraphs);
 """
 
-def install(dir_name,version=None):
+def install(dir_name,version=None,extras=True):
     if not os.path.exists(os.path.join(dir_name,'bin','clang')):
         print('installing clang version',version)
 
@@ -91,8 +87,9 @@ def install(dir_name,version=None):
             ('libunwind-'+str(version)+'.src',         'llvm/projects/libunwind'),
             ('compiler-rt-'+str(version)+'.src',       'llvm/projects/compiler-rt'),
             ('cfe-'+str(version)+'.src',               'llvm/tools/clang'),
-            ('clang-tools-extra-'+str(version)+'.src', 'llvm/tools/clang/tools/extra'),
         ]
+        if extras:
+            urls.append(('clang-tools-extra-'+str(version)+'.src', 'llvm/tools/clang/tools/extra'))
 
         try:
             tmp_dir = tempfile.mkdtemp()
@@ -131,7 +128,10 @@ def install(dir_name,version=None):
             if subprocess.call(['cmake', clang_dir,
                                 '-DCMAKE_BUILD_TYPE=Release',
                                 '-DLIBCXXABI_USE_LLVM_UNWINDER=True',
-                                # '-DLLVM_TARGETS_TO_BUILD=X86',
+                                '-DLLVM_ENABLE_LIBCXX=ON',
+                                '-DLLVM_ENABLE_LIBCXXABI=ON',
+                                #'-DCMAKE_CXX_LINK_FLAGS=-L'+os.path.join(dir_name,'lib'),
+                                #'-DLLVM_TARGETS_TO_BUILD=X86',
                                 '-DCMAKE_INSTALL_PREFIX='+dir_name,
                                 ],cwd=clang_build_dir):
                 raise Exception('clang cmake failed')

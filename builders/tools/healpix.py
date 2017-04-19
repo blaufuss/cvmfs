@@ -6,7 +6,7 @@ import tempfile
 import shutil
 import glob
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 healpix_c_makefile_patch = """
 Index: llvm/projects/libcxx/lib/CMakeLists.txt
@@ -57,7 +57,8 @@ def install(dir_name,version=None,i3ports=False,for_clang=False):
                 i3ports_dir = dir_name
             if subprocess.call(['make','shared',
                                 'CFITSIO_INCDIR='+os.path.join(i3ports_dir,'include'),
-                                'CFITSIO_LIBDIR='+os.path.join(i3ports_dir,'lib')
+                                'CFITSIO_LIBDIR='+os.path.join(i3ports_dir,'lib'),
+                                '-j', cpu_cores
                                ],cwd=healpix_dir):
                 raise Exception('healpix C failed to make')
             if subprocess.call(['make','install',

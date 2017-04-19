@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libxml2.so')):
@@ -22,7 +22,7 @@ def install(dir_name,version=None):
                                 '--prefix',dir_name,'--without-python'],
                                cwd=libxml2_dir):
                 raise Exception('libxml2 failed to configure')
-            if subprocess.call(['make'],cwd=libxml2_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=libxml2_dir):
                 raise Exception('libxml2 failed to make')
             if subprocess.call(['make','install'],cwd=libxml2_dir):
                 raise Exception('libxml2 failed to install')

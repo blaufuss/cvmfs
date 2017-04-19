@@ -5,7 +5,7 @@ import subprocess
 import tempfile
 import shutil
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'bin','cmake')):
@@ -21,7 +21,7 @@ def install(dir_name,version=None):
             if subprocess.call([os.path.join(cmake_dir,'configure'),
                                 '--prefix='+dir_name],cwd=cmake_dir):
                 raise Exception('cmake failed to configure')
-            if subprocess.call(['make'],cwd=cmake_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=cmake_dir):
                 raise Exception('cmake failed to make')
             if subprocess.call(['make','install'],cwd=cmake_dir):
                 raise Exception('cmake failed to install')

@@ -6,13 +6,7 @@ import tempfile
 import shutil
 from functools import partial
 
-from build_util import wget, unpack, version_dict
-
-try:
-    import multiprocessing
-    cpu_cores = multiprocessing.cpu_count()
-except ImportError:
-    cpu_cores = 1
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def is_release(version):
     return version not in ('trunk','stable')
@@ -43,7 +37,7 @@ def install(dir_name,meta=None,version=None,svn_up=True):
                                 '-DCOPY_PYTHON_DIR=True', src_dir],
                                 cwd=build_dir):
                 raise Exception('%s %s failed to cmake'%(meta,version))
-            if subprocess.call(['make','-j',str(cpu_cores)], cwd=build_dir):
+            if subprocess.call(['make','-j',cpu_cores], cwd=build_dir):
                 raise Exception('%s %s failed to cmake'%(meta,version))
         except Exception:
             shutil.rmtree(build_dir)

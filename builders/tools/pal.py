@@ -6,7 +6,7 @@ import tempfile
 import shutil
 import copy
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, cpu_cores
 
 def install(dir_name,version=None):
     if not os.path.exists(os.path.join(dir_name,'lib','libpal.so')):
@@ -38,7 +38,7 @@ def install(dir_name,version=None):
                                 '--prefix',dir_name],
                                cwd=pal_dir):
                 raise Exception('pal failed to configure')
-            if subprocess.call(['make'],cwd=pal_dir):
+            if subprocess.call(['make', '-j', cpu_cores],cwd=pal_dir):
                 raise Exception('pal failed to make')
             if subprocess.call(['make','install'],cwd=pal_dir):
                 raise Exception('pal failed to install')
