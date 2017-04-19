@@ -76,8 +76,8 @@ def build(src,dest,**build_kwargs):
     load_env(srootbase, reset=orig_env)
 
     # build core software
-    tools['libtool']['2.4.6'](dir_name)
     tools['m4']['1.4.18'](dir_name)
+    tools['libtool']['2.4.6'](dir_name)
     tools['pkg-config']['0.29.2'](dir_name)
     tools['libffi']['3.2.1'](dir_name)
     tools['libarchive']['3.3.1'](dir_name)
@@ -114,7 +114,6 @@ def build(src,dest,**build_kwargs):
     tools['pal']['master'](dir_name)
     tools['healpix']['3.31'](dir_name,i3ports=False)
     tools['nlopt']['2.4.2'](dir_name)
-    tools['photospline']['2.0.0'](dir_name)
 
     tools['pythia']['6.4.28'](dir_name)
     tools['root']['6.09.02'](dir_name)
@@ -128,7 +127,10 @@ def build(src,dest,**build_kwargs):
 
     # build python software
     python_packages(dir_name)
+
+    # tools that require python packages
     tools['boostnumpy']['master'](dir_name)
+    tools['photospline']['2.0.0'](dir_name)
 
     # copy "tools"
     for t in ('libgfortran',):
