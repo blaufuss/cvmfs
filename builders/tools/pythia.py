@@ -6,7 +6,7 @@ import tempfile
 import shutil
 from glob import glob
 
-from build_util import wget, unpack, version_dict
+from build_util import wget, unpack, version_dict, get_fortran_compiler, cpu_cores
 
 makefile = """
 all: lib-shared
@@ -79,7 +79,8 @@ def install(dir_name,version=None):
             mod_env['PREFIX'] = dir_name
             mod_env['CFLAGS'] = '-m64 -fPIC'
             mod_env['FFLAGS'] = '-m64 -fPIC'
-            if subprocess.call(['make'], cwd=build_dir, env=mod_env):
+            mod_env['FC'] = get_fortran_compiler()
+            if subprocess.call(['make','-j',cpu_cores], cwd=build_dir, env=mod_env):
                 raise Exception('pythia6 failed to make')
             if subprocess.call(['make','install'], cwd=build_dir,
                                env=mod_env):
