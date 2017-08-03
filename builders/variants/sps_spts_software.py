@@ -34,6 +34,14 @@ def python_packages(dir_name):
                 'virtualenv==15.1.0',
                 'pyOpenSSL==16.2.0',
                 'pymongo==3.4.0',
+		'pyzmq==16.0.2',
+		'pycrypto==2.6.1',
+		'lxml==3.7.3',
+		'argparse==1.4.0',
+		'redis==2.10.5',
+		'hiredis==0.2.0',
+		'simplejson==3.11.1',
+		'Fabric==1.13.2',
                ]
 
     for pkg in packages:
@@ -104,6 +112,7 @@ def build(src,dest,**build_kwargs):
     tools['zmq']['4.1.6'](dir_name)
     tools['pip']['latest'](dir_name)
     tools['omniorb']['4.2.2'](dir_name)
+    tools['omniorbpy']['4.2.2'](dir_name)
     tools['zthread']['2.3.2'](dir_name)
     tools['redis']['3.2.9'](dir_name)
     tools['hiredis']['0.13.3'](dir_name)

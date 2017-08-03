@@ -8,7 +8,7 @@ import shutil
 from build_util import wget, unpack_bz2, version_dict
 
 def install(dir_name,version=None):
-    if not os.path.exists(os.path.join(dir_name,'lib/omniORB-4.2.2','libomniORB4.so')):
+    if not os.path.exists(os.path.join(dir_name,'lib','libomniORB4.so')):
         print('installing omniorb version',version)
         name = 'omniORB-'+str(version)+'.tar.bz2'
         try:
@@ -24,10 +24,10 @@ def install(dir_name,version=None):
             mod_env['CPPFLAGS'] = '-fPIC'
             if subprocess.call([os.path.join(oo_dir,'configure'),
                                 '--prefix', dir_name,
-                                '--bindir', dir_name+'/bin/omniORB-'+ version,
-                                '--libdir', dir_name+'/lib/omniORB-'+ version,
-                                '--includedir', dir_name+'/include/omniORB-'+ version,
-                                '--datadir', dir_name+'/share/omniORB-'+ version,
+                                '--bindir', dir_name+'/bin',
+                                '--libdir', dir_name+'/lib',
+                                '--includedir', dir_name+'/include',
+                                '--datadir', dir_name+'/share',
                                 '--enable-static', '--with-omniNames-logdir=/var/tmp',
                                 '--without-openssl', '--disable-thread-tracing'],
                                 cwd=oo_dir):
