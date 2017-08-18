@@ -8,7 +8,7 @@ import shutil
 from build_util import wget, unzip, version_dict
 
 def install(dir_name,version=None):
-    if not os.path.exists(os.path.join(dir_name,'lib','python2.7','site-packages','apsw.so')):
+    if subprocess.call(['python','-c','import apsw']):
         print('installing apsw version',version)
         name = 'apsw-'+str(version)+'.zip'
         sqlite_version = version.split('-')[0]

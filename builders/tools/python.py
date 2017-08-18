@@ -17,7 +17,7 @@ def symlink(target,dest):
         finally:
             os.chdir(curdir)
 
-def install(dir_name,version=None):
+def install(dir_name,version=None,pgo=False):
     if not os.path.exists(os.path.join(dir_name,'bin','python')):
         print('installing python version',version)
         name = 'Python-'+str(version)+'.tgz'
@@ -33,6 +33,12 @@ def install(dir_name,version=None):
             if v.version[0] < 3 or (v.version[0] == 3 and v.version[1] < 3):
                 # 3.3+ is ucs4 by default, set it for older pythons
                 options.append('--enable-unicode=ucs4')
+            if pgo and (v.version[0] > 3 or (v.version[0] == 3 and v.version[1] > 5)):
+                options.append('--enable-optimizations')
+                os_arch = os.environ['OS_ARCH'].split('_')
+                if ((os_arch[0] == 'RHEL' and float(os_arch[1]) > 7)
+                    or (os_arch[0] == 'Ubuntu' and os_arch[1] not in ('12.04','14.04'))):
+                    options.append('--with-lto')
             if subprocess.call([os.path.join(python_dir,'configure'),
                                 '--prefix',dir_name,]+options
                                ,cwd=python_dir):
@@ -53,6 +59,8 @@ def install(dir_name,version=None):
                         os.path.join(dir_name, 'lib', 'pkgconfig', 'python.pc'))
                 symlink(os.path.join(dir_name, 'include', 'python%sm' % version_short),
                         os.path.join(dir_name, 'include', 'python%s' % version_short))
+                symlink(os.path.join(dir_name,'bin','pip3'),
+                        os.path.join(dir_name,'bin','pip'))
             # check for modules
             for m in ('sqlite3','zlib','bz2','_ssl','_curses','readline'):
                 if subprocess.call([os.path.join(dir_name,'bin','python'),

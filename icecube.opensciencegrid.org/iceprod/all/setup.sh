@@ -7,35 +7,21 @@
 DIR=$(echo "${0%/*}")
 ICEPRODBASE=$(cd "$DIR" && echo "$(pwd -L)")
 
-# load IceCube environmentOLD_IFS=$IFS
-SETUP=`$ICEPRODBASE/../../py2-v2/setup.sh`
-IFS=';'
-VARS=""
-for x in $SETUP; do
-    IFS='='
-    for y in $x; do
-        z=`echo $y|sed 's/export//g'|tr -d ' \n'`
-        if [ "x${VARS}" = "x" ]; then
-            VARS="$z"
-        else
-            VARS="${VARS} $z"
-        fi
-        break
-    done
-    IFS=';'
-done
-eval $SETUP
+. $ICEPRODBASE/os_arch.sh
 
 ICEPRODROOT=$ICEPRODBASE/$OS_ARCH
 
 PATH=$ICEPRODROOT/bin:$PATH
 
+# clear the pythonpath, otherwise strange things happen
+PYTHONPATH=
+
 PKG_CONFIG_PATH=$ICEPRODROOT/lib/pkgconfig:$PKG_CONFIG_PATH
 LD_LIBRARY_PATH=$ICEPRODROOT/lib:$LD_LIBRARY_PATH
-PYTHONPATH=$ICEPRODROOT/lib/python2.7/site-packages:$PYTHONPATH
+#PYTHONPATH=$ICEPRODROOT/lib/python2.7/site-packages:$PYTHONPATH
 MANPATH=$ICEPRODROOT/man:$ICEPRODROOT/share/man:$MANPATH
 
-VARS="${VARS} ICEPRODBASE ICEPRODROOT"
+VARS="OS_ARCH ICEPRODBASE ICEPRODROOT PATH PYTHONPATH PKG_CONFIG_PATH LD_LIBRARY_PATH MANPATH"
 
 IFS=' '
 for name in ${VARS}
