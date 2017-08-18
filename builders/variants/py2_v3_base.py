@@ -87,6 +87,8 @@ def build(src,dest,**build_kwargs):
     tools['cmake']['3.7.2'](dir_name)
     tools['log4cpp']['1.1.1'](dir_name)
 
+    tools['zstd']['1.3.0'](dir_name)
+
     tools['zmq']['4.1.6'](dir_name)
     tools['pip']['latest'](dir_name)
     # dropping GUI support
