@@ -30,7 +30,7 @@ def build(src,dest,svn_up=None,**build_kwargs):
     # releases
     #tools['i3_metaproject']['simulation']['V05-01-00'](dir_name,**kwargs)
 
-    tools['i3_metaproject']['icerec']['V05-01-00'](dir_name,**kwargs)
+    #tools['i3_metaproject']['icerec']['V05-01-00'](dir_name,**kwargs)
 
     # trunks
     tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)

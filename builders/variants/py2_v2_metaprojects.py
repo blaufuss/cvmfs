@@ -42,7 +42,9 @@ def build(src,dest,svn_up=None,**build_kwargs):
     tools['i3_metaproject']['simulation']['V05-00-08'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V05-01-00'](dir_name,**kwargs)
     tools['i3_metaproject']['simulation']['V05-01-01'](dir_name,**kwargs)
-    tools['i3_metaproject']['simulation']['V05-01-02'](dir_name,**kwargs)
+    if 'Ubuntu_12' not in dir_name: # c++11
+        tools['i3_metaproject']['simulation']['V05-01-02'](dir_name,**kwargs)
+        tools['i3_metaproject']['simulation']['V05-01-03-UG'](dir_name,branch=True,**kwargs)
 
     tools['i3_metaproject']['icerec']['V05-00-00'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-00-01'](dir_name,**kwargs)
@@ -50,6 +52,8 @@ def build(src,dest,svn_up=None,**build_kwargs):
     tools['i3_metaproject']['icerec']['V05-00-03'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-00-04'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-00-05'](dir_name,**kwargs)
+    tools['i3_metaproject']['icerec']['V05-00-06'](dir_name,**kwargs)
+    tools['i3_metaproject']['icerec']['V05-00-07'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-01-00'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-01-01'](dir_name,**kwargs)
     tools['i3_metaproject']['icerec']['V05-01-02'](dir_name,**kwargs)
@@ -59,5 +63,6 @@ def build(src,dest,svn_up=None,**build_kwargs):
     tools['i3_metaproject']['icerec']['V05-01-06'](dir_name,**kwargs)
 
     # trunks
-    #tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
+    #if 'Ubuntu_12' not in dir_name: # c++11
+    #    tools['i3_metaproject']['combo']['stable'](dir_name,**kwargs)
 

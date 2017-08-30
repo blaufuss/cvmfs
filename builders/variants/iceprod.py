@@ -124,7 +124,7 @@ def build(src,dest,version=None,**build_kwargs):
             releases[row['tag_name']] = row['tarball_url']
 
     if version:
-        releases = {r:releases[r] for r in releases if r == version}
+        releases = dict([(r,releases[r]) for r in releases if r == version])
 
     if (not version) or version not in releases:
         # build from git

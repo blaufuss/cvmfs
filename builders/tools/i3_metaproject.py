@@ -11,13 +11,15 @@ from build_util import wget, unpack, version_dict, cpu_cores
 def is_release(version):
     return version not in ('trunk','stable')
 
-def install(dir_name,meta=None,version=None,svn_up=True):
+def install(dir_name,meta=None,version=None,svn_up=True,branch=False):
     build_dir = os.path.join(dir_name,'metaprojects',meta,version)
     svn_auth = ['--username','icecube','--password','skua','--non-interactive']
     if not os.path.exists(build_dir) or not is_release(version):
         print('installing %s %s',(meta,version))
         try:
-            if is_release(version):
+            if branch:
+                svn_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/branches/%s'%(meta,version)
+            elif is_release(version):
                 svn_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/releases/%s'%(meta,version)
             else:
                 svn_url = 'http://code.icecube.wisc.edu/svn/meta-projects/%s/%s'%(meta,version)
