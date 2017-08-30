@@ -36,7 +36,7 @@ def python_packages(dir_name):
     # tables is special
     os.environ['HDF5_DIR'] = os.environ['SROOT']
     os.environ['BLOSC_DIR'] = os.environ['SROOT']
-    tools['pip']['install']('tables==3.4.1')
+    tools['pip']['install']('tables==3.4.1',from_src=True)
     del os.environ['HDF5_DIR']
     del os.environ['BLOSC_DIR']
 
