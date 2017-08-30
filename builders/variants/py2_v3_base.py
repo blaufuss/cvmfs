@@ -35,8 +35,10 @@ def python_packages(dir_name):
 
     # tables is special
     os.environ['HDF5_DIR'] = os.environ['SROOT']
+    os.environ['BLOSC_DIR'] = os.environ['SROOT']
     tools['pip']['install']('tables==3.4.1')
     del os.environ['HDF5_DIR']
+    del os.environ['BLOSC_DIR']
 
     # pyfftw is special
     if 'CFLAGS' in os.environ:
@@ -88,6 +90,7 @@ def build(src,dest,**build_kwargs):
     tools['log4cpp']['1.1.1'](dir_name)
 
     tools['zstd']['1.3.0'](dir_name)
+    tools['blosc']['1.12.1'](dir_name)
 
     tools['zmq']['4.1.6'](dir_name)
     tools['pip']['latest'](dir_name)
