@@ -14,7 +14,7 @@ def install(dir_name,version=None):
         try:
             tmp_dir = tempfile.mkdtemp()
             path = os.path.join(tmp_dir,name)
-            url = os.path.join('ftp://invisible-island.net/cdk',name)
+            url = os.path.join('ftp://ftp.invisible-island.net/cdk',name)
             wget(url,path)
             unpack(path,tmp_dir)
             cdk_dir = os.path.join(tmp_dir,'cdk-'+version)
