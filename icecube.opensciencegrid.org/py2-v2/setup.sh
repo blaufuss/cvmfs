@@ -126,10 +126,12 @@ if [ -z ${GFORTRAN} ]; then
     LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SROOT}/tools/gfortran
 fi
 
+CUR_SHELL=`readlink "/proc/$$/exe"|awk -F'/' '{print $NF}'`
+
 for name in ${VARS}
 do
   eval VALUE=\$$name
-  case ${SHELL##*/} in 
+  case ${CUR_SHELL} in 
 	tcsh)
 		echo 'setenv '$name' '\"$VALUE\"' ;' ;;
 	csh)
