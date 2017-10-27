@@ -44,6 +44,7 @@ def python_packages(dir_name):
 		'hiredis==0.2.0',
 		'simplejson==3.11.1',
 		'Fabric==1.13.2',
+		'tornado==4.5.2',
                ]
 
     for pkg in packages:
