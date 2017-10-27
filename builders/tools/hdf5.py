@@ -25,7 +25,7 @@ def install(dir_name,version=None):
                 except Exception:
                     url = os.path.join("https://support.hdfgroup.org/ftp/HDF5/current18", 'src', name)
                     wget(url,path)
-            unpack(path,tmp_dir,flags=['-xj'])
+            unpack(path,tmp_dir,flags=['-xz'])
             hdf5_dir = os.path.join(tmp_dir,'hdf5-'+version)
             if 'CC' in os.environ:
                 os.environ['HDF5_CC'] = os.environ['CC']

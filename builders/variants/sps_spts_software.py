@@ -18,6 +18,8 @@ def python_packages(dir_name):
                 'scipy==0.19.0',
                 'readline==6.2.4.1',
                 'ipython==5.3.0',
+		'pyserial==3.2.1',
+		'APLpy==1.1.1',
                 #'pyfits==3.4',
                 #'numexpr==2.6.2',
                 #'Cython==0.25.2',
