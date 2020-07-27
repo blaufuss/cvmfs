@@ -99,7 +99,7 @@ def build(src,dest,**build_kwargs):
     load_env(srootbase, reset=orig_env)
 
     # build core software
-    tools['m4']['1.4.18'](dir_name)
+    #tools['m4']['1.4.18'](dir_name)
     tools['libtool']['2.4.6'](dir_name)
     tools['pkg-config']['0.29.2'](dir_name)
     #tools['libffi']['3.2.1'](dir_name)
@@ -107,7 +107,7 @@ def build(src,dest,**build_kwargs):
     tools['libxml2']['2.9.4'](dir_name)
     # SQLITE needed by python
     tools['sqlite']['3180000'](dir_name)
-    tools['python']['2.7.13'](dir_name)
+    tools['python']['2.7.17'](dir_name)
     tools['cmake']['3.7.2'](dir_name)
     #tools['log4cpp']['1.1.1'](dir_name)
 
